@@ -1,0 +1,768 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Tu seguro 2027</title>
+<meta name="description" content="Cuéntanos de tu familia y te preparo las mejores opciones de seguro de salud para 2027. Manuel De Sousa Ins.">
+<meta name="theme-color" content="#12303A">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#12303A;        /* azul petróleo: texto y botones */
+  --ink-2:#2C4A54;
+  --mango:#F5A524;      /* acento: selección y progreso */
+  --mango-soft:#FDEBC8;
+  --paper:#F6F8F7;      /* fondo */
+  --card:#FFFFFF;
+  --mist:#DCE8E6;       /* bordes y separadores */
+  --muted:#5D7178;
+  --ok:#24785A;
+  --err:#B3361F;
+  --err-soft:#FBE6E1;
+  --r-card:22px; --r-field:12px;
+  color-scheme: light;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 17px/1.55 "Atkinson Hyperlegible",system-ui,sans-serif;min-height:100dvh}
+h1,h2,h3{font-family:"Bricolage Grotesque",system-ui,sans-serif;line-height:1.08;margin:0;letter-spacing:-.01em}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--mango);outline-offset:2px}
+
+/* ---------- Cabecera con la familia ---------- */
+.top{position:sticky;top:0;z-index:10;background:var(--ink);color:#fff;padding:14px 16px 12px;padding-top:max(14px,env(safe-area-inset-top))}
+.top-in{max-width:620px;margin:0 auto}
+.brand{display:flex;justify-content:space-between;align-items:center;gap:12px;font-size:14px}
+.brand b{font-family:"Bricolage Grotesque";font-weight:700;font-size:15px;letter-spacing:0}
+.brand span{opacity:.75}
+.bar{display:grid;grid-template-columns:repeat(6,1fr);gap:5px;margin-top:12px}
+.bar i{height:5px;border-radius:3px;background:rgba(255,255,255,.18);transition:background .3s}
+.bar i.done{background:var(--mango)}
+.bar i.now{background:linear-gradient(90deg,var(--mango) 50%,rgba(255,255,255,.18) 50%)}
+.family{display:flex;align-items:center;gap:6px;margin-top:12px;min-height:34px}
+.family:empty{display:none}
+.family .lbl{font-size:13px;opacity:.75;margin-right:4px}
+.tok{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font:700 13px/1 "Bricolage Grotesque";background:var(--mango);color:var(--ink);border:2px solid var(--ink);margin-left:-10px;animation:pop .35s cubic-bezier(.3,1.6,.5,1)}
+.tok:first-of-type{margin-left:0}
+.tok.no{background:transparent;color:#fff;border:2px dashed rgba(255,255,255,.5)}
+@keyframes pop{from{transform:scale(.3);opacity:0}to{transform:none;opacity:1}}
+
+/* ---------- Pantallas ---------- */
+main{max-width:620px;margin:0 auto;padding:26px 16px 120px}
+.step{display:none}
+.step.on{display:block;animation:in .35s ease}
+@keyframes in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.kicker{font-size:15px;color:var(--muted);margin:0 0 6px}
+.step h2{font-size:clamp(30px,8vw,40px);font-weight:800;margin-bottom:10px}
+.lead{color:var(--ink-2);margin:0 0 24px;max-width:52ch}
+
+.hero{margin:-26px -16px 26px;padding:28px 16px 30px;background:var(--ink);color:#fff;position:relative;overflow:hidden}
+.hero h1{font-size:clamp(38px,11vw,58px);font-weight:800;max-width:11ch}
+.hero p{margin:14px 0 0;max-width:40ch;opacity:.9}
+.hero .yr{display:block;font:800 clamp(110px,34vw,190px)/.82 "Bricolage Grotesque";color:var(--mango);letter-spacing:-.055em;margin:6px 0 4px -4px}
+.hero .facts{display:flex;gap:8px;margin-top:20px;font-size:14px;flex-wrap:wrap}
+.hero .facts span{border:1.5px solid rgba(255,255,255,.35);border-radius:999px;padding:5px 12px}
+
+/* ---------- Campos ---------- */
+.q{margin:0 0 22px;border:0;padding:0;min-width:0}
+.q > label,.q > legend{display:block;font-weight:700;margin-bottom:8px;padding:0}
+.q .hint{display:block;font-weight:400;font-size:15px;color:var(--muted);margin-top:2px}
+.opt{font-weight:400;color:var(--muted);font-size:15px}
+input[type=text],input[type=tel],input[type=email],input[type=number],input[type=date],select,textarea{
+  width:100%;background:var(--card);border:2px solid var(--mist);border-radius:var(--r-field);padding:13px 14px;min-height:52px;transition:border-color .15s;appearance:none;-webkit-appearance:none}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9'%3E%3Cpath d='M1 1l6 6 6-6' stroke='%2312303A' stroke-width='2' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:40px}
+textarea{min-height:92px;resize:vertical}
+input:focus,select:focus,textarea:focus{border-color:var(--ink);outline:none}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.money{position:relative}
+.money::before{content:"$";position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted);font-weight:700}
+.money input{padding-left:28px}
+
+/* opciones tipo botón */
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips.stack{flex-direction:column}
+.chip{position:relative}
+.chip input{position:absolute;opacity:0;inset:0;width:100%;height:100%;margin:0;cursor:pointer}
+.chip span{display:flex;align-items:center;gap:10px;min-height:48px;padding:11px 16px;background:var(--card);border:2px solid var(--mist);border-radius:var(--r-field);transition:background .15s,border-color .15s;cursor:pointer}
+.chips.stack .chip span{width:100%}
+.chip span::before{content:"";flex:none;width:18px;height:18px;border-radius:50%;border:2px solid var(--muted);transition:all .15s}
+.chip input[type=checkbox] + span::before{border-radius:5px}
+.chip input:checked + span{background:var(--ink);border-color:var(--ink);color:#fff}
+.chip input:checked + span::before{border-color:var(--mango);background:var(--mango);box-shadow:inset 0 0 0 3px var(--ink)}
+.chip input:focus-visible + span{outline:3px solid var(--mango);outline-offset:2px}
+
+.reveal{margin-top:12px;display:none}
+.reveal.on{display:block;animation:in .25s ease}
+
+.note{background:var(--mango-soft);border-radius:var(--r-field);padding:14px 16px;margin:0 0 22px;font-size:15.5px}
+.note b{display:block;margin-bottom:2px}
+.err-msg{display:none;color:var(--err);font-size:15px;margin-top:6px;font-weight:700}
+.bad .err-msg{display:block}
+.bad input,.bad select,.bad .chip span{border-color:var(--err)}
+
+/* ---------- Tarjetas de persona ---------- */
+.person{background:var(--card);border-radius:var(--r-card);padding:20px 16px 4px;margin-bottom:16px;border:2px solid var(--mist)}
+.person-h{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+.person-h .tok{margin:0;width:42px;height:42px;font-size:15px;border-color:var(--card);animation:none}
+.person-h .tok.no{color:var(--ink);border:2px dashed var(--muted)}
+.person-h h3{font-size:22px;flex:1}
+.person-h .age{font-size:14px;color:var(--muted);font-family:"Atkinson Hyperlegible";font-weight:400;display:block;margin-top:2px;letter-spacing:0}
+.rm{background:none;border:0;color:var(--err);font-size:15px;text-decoration:underline;cursor:pointer;padding:8px}
+.add{width:100%;min-height:58px;border:2px dashed var(--ink);border-radius:var(--r-card);background:transparent;font-weight:700;cursor:pointer;font-size:17px}
+.add:hover{background:var(--card)}
+details.more{margin:-6px 0 18px}
+details.more summary{cursor:pointer;color:var(--ink-2);font-weight:700;font-size:15.5px;padding:6px 0}
+
+/* ---------- Navegación ---------- */
+.nav{position:fixed;left:0;right:0;bottom:0;background:linear-gradient(transparent,var(--paper) 30%);padding:22px 16px max(16px,env(safe-area-inset-bottom));z-index:9;pointer-events:none}
+.nav-in{max-width:620px;margin:0 auto;display:flex;gap:10px;pointer-events:auto}
+.btn{min-height:56px;border-radius:999px;border:0;padding:0 26px;font-weight:700;font-size:17px;cursor:pointer}
+.btn.go{flex:1;background:var(--ink);color:#fff}
+.btn.go:hover{background:var(--ink-2)}
+.btn.back{background:var(--card);border:2px solid var(--mist)}
+.btn[disabled]{opacity:.6;cursor:wait}
+.saved{font-size:13px;color:var(--muted);text-align:center;margin-top:6px}
+
+.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+
+/* ---------- Final ---------- */
+.done-wrap{text-align:left;padding-top:20px}
+.check{width:84px;height:84px;border-radius:50%;background:var(--mango);display:grid;place-items:center;margin-bottom:22px}
+.check svg{width:40px}
+.check path{stroke-dasharray:60;stroke-dashoffset:60;animation:draw .6s .2s ease forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+.next{background:var(--card);border-radius:var(--r-card);padding:18px;margin-top:22px;border:2px solid var(--mist)}
+.next ol{margin:8px 0 0;padding-left:20px}
+.next li{margin:6px 0}
+.sign{margin-top:26px;font-size:15px;color:var(--muted)}
+.sign b{color:var(--ink);font-family:"Bricolage Grotesque";font-size:18px;display:block}
+
+.fail{display:none;background:var(--err-soft);color:var(--err);border-radius:var(--r-field);padding:14px 16px;margin-top:16px;font-weight:700}
+.fail.on{display:block}
+small.legal{display:block;font-size:13.5px;color:var(--muted);line-height:1.5;margin-top:4px}
+
+@media (min-width:900px){
+  main{padding-top:40px}
+  .hero{margin:0 0 30px;border-radius:var(--r-card);padding:36px 32px 40px}
+}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}.check path{stroke-dashoffset:0}}
+</style>
+</head>
+<body>
+
+<header class="top" aria-label="Progreso">
+  <div class="top-in">
+    <div class="brand"><b>Manuel De Sousa Ins</b><span id="stepTxt">Paso 1 de 6</span></div>
+    <div class="bar" id="bar" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <div class="family" id="family" aria-live="polite"></div>
+  </div>
+</header>
+
+<main>
+<form id="f" novalidate autocomplete="on">
+  <div class="hp" aria-hidden="true"><label>No llenar <input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
+
+  <!-- ============ 1. CONTACTO ============ -->
+  <section class="step on" data-step="1">
+    <div class="hero">
+      <h1>Preparemos tu seguro para <span class="yr">2027</span></h1>
+      <p>Cuéntame de tu familia en unos 8 minutos. Con esto te preparo las opciones que te convienen, sin tener que repetirlo todo por teléfono.</p>
+      <div class="facts"><span>No pedimos Seguro Social</span><span>Sin costo</span></div>
+    </div>
+    <h2>¿Cómo te contacto?</h2>
+    <p class="lead">Solo para enviarte tus opciones. No compartimos tus datos.</p>
+
+    <div class="q"><label for="nombre">Nombre y apellido</label><input id="nombre" name="contacto.nombre" type="text" autocomplete="name" required><div class="err-msg">Escribe tu nombre y apellido.</div></div>
+    <div class="q"><label for="tel">Teléfono</label><input id="tel" name="contacto.telefono" type="tel" inputmode="tel" autocomplete="tel-national" placeholder="(407) 555-0123" required data-type="phone"><div class="err-msg">Escribe un teléfono de 10 números.</div></div>
+    <div class="q"><label for="email">Correo <span class="opt">(opcional)</span></label><input id="email" name="contacto.email" type="email" autocomplete="email" inputmode="email" data-type="email"><div class="err-msg">Revisa el correo, parece que le falta algo.</div></div>
+    <div class="row">
+      <div class="q"><label for="estado">Estado</label><select id="estado" name="contacto.estado" required></select><div class="err-msg">Elige tu estado.</div></div>
+      <div class="q"><label for="zip">Código postal</label><input id="zip" name="contacto.codigo_postal" type="text" inputmode="numeric" maxlength="5" autocomplete="postal-code" required data-type="zip"><div class="err-msg">5 números.</div></div>
+    </div>
+    <fieldset class="q" data-req><legend>¿Por dónde prefieres que te contacte?</legend>
+      <div class="chips">
+        <label class="chip"><input type="radio" name="contacto.via" value="whatsapp"><span>WhatsApp</span></label>
+        <label class="chip"><input type="radio" name="contacto.via" value="llamada"><span>Llamada</span></label>
+        <label class="chip"><input type="radio" name="contacto.via" value="texto"><span>Mensaje de texto</span></label>
+        <label class="chip"><input type="radio" name="contacto.via" value="correo"><span>Correo</span></label>
+      </div><div class="err-msg">Elige una opción.</div>
+    </fieldset>
+    <fieldset class="q" data-req><legend>¿A qué hora te queda mejor?</legend>
+      <div class="chips">
+        <label class="chip"><input type="radio" name="contacto.horario" value="manana"><span>Mañana</span></label>
+        <label class="chip"><input type="radio" name="contacto.horario" value="tarde"><span>Tarde</span></label>
+        <label class="chip"><input type="radio" name="contacto.horario" value="noche"><span>Noche</span></label>
+        <label class="chip"><input type="radio" name="contacto.horario" value="cualquiera"><span>Cualquiera</span></label>
+      </div><div class="err-msg">Elige una opción.</div>
+    </fieldset>
+  </section>
+
+  <!-- ============ 2. LO QUE BUSCAS ============ -->
+  <section class="step" data-step="2">
+    <p class="kicker">Lo que buscas</p>
+    <h2>¿Para quién es el seguro?</h2>
+    <p class="lead">Así sé por dónde empezar.</p>
+    <fieldset class="q" data-req><legend>El seguro es…</legend>
+      <div class="chips stack">
+        <label class="chip"><input type="radio" name="objetivo.para_quien" value="solo_yo"><span>Solo para mí</span></label>
+        <label class="chip"><input type="radio" name="objetivo.para_quien" value="yo_y_familia"><span>Para mí y mi familia</span></label>
+        <label class="chip"><input type="radio" name="objetivo.para_quien" value="otros_familia"><span>Para otros de mi familia, no para mí</span></label>
+      </div><div class="err-msg">Elige una opción.</div>
+    </fieldset>
+    <fieldset class="q" data-req><legend>¿Qué frase se parece más a lo que piensas?</legend>
+      <div class="chips stack">
+        <label class="chip"><input type="radio" name="objetivo.frase" value="cubrir_necesidades"><span>Quiero algo que cubra bien nuestras necesidades médicas</span></label>
+        <label class="chip"><input type="radio" name="objetivo.frase" value="poder_pagar"><span>Quiero algo que pueda pagar cada mes sin problema</span></label>
+        <label class="chip"><input type="radio" name="objetivo.frase" value="si_no_hay_nada"><span>Si no encuentro algo que me convenga, prefiero no tener seguro</span></label>
+        <label class="chip"><input type="radio" name="objetivo.frase" value="ayuda_comparar"><span>Necesito ayuda para comparar y entender</span></label>
+      </div><div class="err-msg">Elige una opción.</div>
+    </fieldset>
+    <fieldset class="q"><legend>¿Cuánto te sentirías cómodo pagando al mes? <span class="opt">(opcional)</span><span class="hint">Por todo el grupo. Me ayuda a saber por qué opción empezar; no es un compromiso.</span></legend>
+      <div class="chips">
+        <label class="chip"><input type="radio" name="objetivo.presupuesto_mensual" value="0-50"><span>Menos de $50</span></label>
+        <label class="chip"><input type="radio" name="objetivo.presupuesto_mensual" value="50-100"><span>$50 a $100</span></label>
+        <label class="chip"><input type="radio" name="objetivo.presupuesto_mensual" value="100-200"><span>$100 a $200</span></label>
+        <label class="chip"><input type="radio" name="objetivo.presupuesto_mensual" value="200-350"><span>$200 a $350</span></label>
+        <label class="chip"><input type="radio" name="objetivo.presupuesto_mensual" value="350+"><span>Más de $350</span></label>
+        <label class="chip"><input type="radio" name="objetivo.presupuesto_mensual" value="verlo_juntos"><span>Prefiero verlo contigo</span></label>
+      </div>
+    </fieldset>
+  </section>
+
+  <!-- ============ 3. PERSONAS ============ -->
+  <section class="step" data-step="3">
+    <p class="kicker">Las personas</p>
+    <h2>¿Quiénes son?</h2>
+    <p class="lead" id="pLead">Una tarjeta por persona, empezando por ti. Puedes agregar hasta 8.</p>
+    <div id="people"></div>
+    <div class="q" id="addWrap"><button type="button" class="add" id="addP">+ Agregar otra persona</button><div class="err-msg">Agrega al menos a una persona que necesite seguro.</div></div>
+  </section>
+
+  <!-- ============ 4. HOGAR E INGRESOS ============ -->
+  <section class="step" data-step="4">
+    <p class="kicker">Hogar e ingresos</p>
+    <h2>Tu hogar para los impuestos</h2>
+    <div class="note"><b>Esto es diferente a la lista de personas.</b>Para calcular la ayuda del gobierno cuenta todo el que va en tu declaración de impuestos, aunque no necesite seguro: por ejemplo, un esposo que ya tiene seguro del trabajo.</div>
+    <div class="row">
+      <div class="q"><label for="hh">Personas en tu declaración</label><select id="hh" name="hogar.personas_hogar" required data-num></select><div class="err-msg">Elige un número.</div></div>
+      <div class="q"><label for="dep">Dependientes <span class="opt">(hijos u otros)</span></label><select id="dep" name="hogar.dependientes" data-num></select></div>
+    </div>
+    <fieldset class="q" data-req><legend>¿Cómo declaras impuestos?</legend>
+      <div class="chips stack">
+        <label class="chip"><input type="radio" name="hogar.declaracion" value="soltero"><span>Soltero(a)</span></label>
+        <label class="chip"><input type="radio" name="hogar.declaracion" value="casado_juntos"><span>Casados, juntos</span></label>
+        <label class="chip"><input type="radio" name="hogar.declaracion" value="casado_separado"><span>Casados, por separado</span></label>
+        <label class="chip"><input type="radio" name="hogar.declaracion" value="cabeza_familia"><span>Cabeza de familia</span></label>
+        <label class="chip"><input type="radio" name="hogar.declaracion" value="no_declaro"><span>No declaro impuestos</span></label>
+        <label class="chip"><input type="radio" name="hogar.declaracion" value="no_se"><span>No sé</span></label>
+      </div><div class="err-msg">Elige una opción.</div>
+    </fieldset>
+    <div class="q"><label for="ing">Ingreso del hogar al mes, antes de impuestos<span class="hint">Suma de todos en la declaración. Aproximado está bien.</span></label><div class="money"><input id="ing" name="hogar.ingreso_mensual" type="number" inputmode="numeric" min="0" step="50" required data-num></div><div class="err-msg">Escribe un número aproximado. Si no hay ingresos, pon 0.</div></div>
+    <fieldset class="q" data-req><legend>¿De dónde vienen los ingresos? <span class="opt">Marca todas las que apliquen.</span></legend>
+      <div class="chips">
+        <label class="chip"><input type="checkbox" name="hogar.fuentes_ingreso" value="w2"><span>Empleo (W-2)</span></label>
+        <label class="chip"><input type="checkbox" name="hogar.fuentes_ingreso" value="cuenta_propia"><span>Cuenta propia (1099)</span></label>
+        <label class="chip"><input type="checkbox" name="hogar.fuentes_ingreso" value="pension"><span>Pensión o Seguro Social</span></label>
+        <label class="chip"><input type="checkbox" name="hogar.fuentes_ingreso" value="otro"><span>Otro</span></label>
+        <label class="chip"><input type="checkbox" name="hogar.fuentes_ingreso" value="ninguno"><span>Sin ingresos</span></label>
+      </div><div class="err-msg">Marca al menos una.</div>
+    </fieldset>
+    <fieldset class="q" data-req><legend>¿Algo de esto pasó en 2026 o pasará pronto?</legend>
+      <div class="chips">
+        <label class="chip"><input type="checkbox" name="hogar.cambios" value="matrimonio_divorcio"><span>Matrimonio o divorcio</span></label>
+        <label class="chip"><input type="checkbox" name="hogar.cambios" value="bebe"><span>Un bebé</span></label>
+        <label class="chip"><input type="checkbox" name="hogar.cambios" value="mudanza"><span>Mudanza</span></label>
+        <label class="chip"><input type="checkbox" name="hogar.cambios" value="perdida_empleo"><span>Pérdida de empleo</span></label>
+        <label class="chip"><input type="checkbox" name="hogar.cambios" value="nuevo_empleo"><span>Empleo nuevo</span></label>
+        <label class="chip"><input type="checkbox" name="hogar.cambios" value="cambio_ingresos"><span>Cambio de ingresos</span></label>
+        <label class="chip"><input type="checkbox" name="hogar.cambios" value="ninguno"><span>Nada de esto</span></label>
+      </div><div class="err-msg">Marca al menos una.</div>
+    </fieldset>
+  </section>
+
+  <!-- ============ 5. COBERTURA ACTUAL Y SALUD ============ -->
+  <section class="step" data-step="5">
+    <p class="kicker">Cobertura y salud</p>
+    <h2>Lo que tienen hoy</h2>
+    <p class="lead">Esto me ayuda a buscar planes donde estén tus médicos y tus medicinas.</p>
+    <fieldset class="q" data-req><legend>¿Qué seguro tienen ahora?</legend>
+      <div class="chips">
+        <label class="chip"><input type="radio" name="cobertura_actual.tipo" value="marketplace"><span>Obamacare</span></label>
+        <label class="chip"><input type="radio" name="cobertura_actual.tipo" value="medicaid"><span>Medicaid o CHIP</span></label>
+        <label class="chip"><input type="radio" name="cobertura_actual.tipo" value="trabajo"><span>Del trabajo</span></label>
+        <label class="chip"><input type="radio" name="cobertura_actual.tipo" value="medicare"><span>Medicare</span></label>
+        <label class="chip"><input type="radio" name="cobertura_actual.tipo" value="privado"><span>Plan privado</span></label>
+        <label class="chip"><input type="radio" name="cobertura_actual.tipo" value="ninguno"><span>Ninguno</span></label>
+        <label class="chip"><input type="radio" name="cobertura_actual.tipo" value="no_se"><span>No sé</span></label>
+      </div><div class="err-msg">Elige una opción.</div>
+      <div class="reveal" data-when="cobertura_actual.tipo!=ninguno,no_se">
+        <div class="row">
+          <div class="q"><label for="cia">Compañía <span class="opt">(opcional)</span></label><input id="cia" name="cobertura_actual.compania" type="text" placeholder="Ambetter, Oscar…"></div>
+          <div class="q"><label for="pago">Pagan al mes <span class="opt">(opcional)</span></label><div class="money"><input id="pago" name="cobertura_actual.pago_mensual" type="number" inputmode="numeric" min="0" data-num></div></div>
+        </div>
+      </div>
+    </fieldset>
+    <fieldset class="q" data-req><legend>¿Alguien puede tener seguro por su trabajo?</legend>
+      <div class="chips">
+        <label class="chip"><input type="radio" name="cobertura_actual.seguro_trabajo.respuesta" value="si"><span>Sí</span></label>
+        <label class="chip"><input type="radio" name="cobertura_actual.seguro_trabajo.respuesta" value="no"><span>No</span></label>
+        <label class="chip"><input type="radio" name="cobertura_actual.seguro_trabajo.respuesta" value="no_se"><span>No sé</span></label>
+      </div><div class="err-msg">Elige una opción.</div>
+      <div class="reveal" data-when="cobertura_actual.seguro_trabajo.respuesta=si"><label class="q" style="display:block"><span style="display:block;font-weight:700;margin-bottom:8px">¿Quién?</span><input name="cobertura_actual.seguro_trabajo.quien" type="text" placeholder="Ej.: mi esposo"></label></div>
+    </fieldset>
+    <fieldset class="q" data-req id="hcq"><legend>¿Tienes cuenta en HealthCare.gov?</legend>
+      <div class="chips">
+        <label class="chip"><input type="radio" name="cobertura_actual.cuenta_healthcare" value="si"><span>Sí</span></label>
+        <label class="chip"><input type="radio" name="cobertura_actual.cuenta_healthcare" value="no"><span>No</span></label>
+        <label class="chip"><input type="radio" name="cobertura_actual.cuenta_healthcare" value="no_se"><span>No sé</span></label>
+      </div><div class="err-msg">Elige una opción.</div>
+    </fieldset>
+
+    <h2 style="font-size:28px;margin:34px 0 8px">Salud</h2>
+    <p class="lead">Contesta por todo el grupo. Si dices que sí, cuéntame de quién y qué.</p>
+    <div id="health"></div>
+  </section>
+
+  <!-- ============ 6. EXTRAS Y ENVIAR ============ -->
+  <section class="step" data-step="6">
+    <p class="kicker">Último paso</p>
+    <h2>Protección extra y enviar</h2>
+    <p class="lead">El seguro médico no lo paga todo. Esto me dice si te interesa algo más.</p>
+    <fieldset class="q" data-req><legend>¿Tienen seguro de vida o de gastos finales?</legend>
+      <div class="chips">
+        <label class="chip"><input type="radio" name="extras.tiene_vida" value="si"><span>Sí</span></label>
+        <label class="chip"><input type="radio" name="extras.tiene_vida" value="no"><span>No</span></label>
+        <label class="chip"><input type="radio" name="extras.tiene_vida" value="no_se"><span>No sé</span></label>
+      </div><div class="err-msg">Elige una opción.</div>
+    </fieldset>
+    <fieldset class="q" data-req><legend>¿Sobre qué quieres información? <span class="opt">Marca todas las que quieras.</span></legend>
+      <div class="chips">
+        <label class="chip"><input type="checkbox" name="extras.intereses" value="accidentes"><span>Accidentes</span></label>
+        <label class="chip"><input type="checkbox" name="extras.intereses" value="hospitalizacion"><span>Hospitalización</span></label>
+        <label class="chip"><input type="checkbox" name="extras.intereses" value="enfermedades_criticas"><span>Cáncer, infarto o derrame</span></label>
+        <label class="chip"><input type="checkbox" name="extras.intereses" value="maternidad"><span>Maternidad</span></label>
+        <label class="chip"><input type="checkbox" name="extras.intereses" value="vida_gastos_finales"><span>Vida o gastos finales</span></label>
+        <label class="chip"><input type="checkbox" name="extras.intereses" value="dental_vision"><span>Dental y visión</span></label>
+        <label class="chip"><input type="checkbox" name="extras.intereses" value="ninguno"><span>Solo el seguro médico</span></label>
+      </div><div class="err-msg">Marca al menos una.</div>
+    </fieldset>
+    <fieldset class="q" data-req><legend>¿Cómo nos conociste?</legend>
+      <div class="chips">
+        <label class="chip"><input type="radio" name="extras.como_nos_conocio" value="facebook_instagram"><span>Facebook o Instagram</span></label>
+        <label class="chip"><input type="radio" name="extras.como_nos_conocio" value="whatsapp"><span>WhatsApp</span></label>
+        <label class="chip"><input type="radio" name="extras.como_nos_conocio" value="referido"><span>Me lo recomendaron</span></label>
+        <label class="chip"><input type="radio" name="extras.como_nos_conocio" value="ya_cliente"><span>Ya soy cliente</span></label>
+        <label class="chip"><input type="radio" name="extras.como_nos_conocio" value="otro"><span>Otro</span></label>
+      </div><div class="err-msg">Elige una opción.</div>
+      <div class="reveal" data-when="extras.como_nos_conocio=referido"><input name="extras.quien_refirio" type="text" placeholder="¿Quién te recomendó? (opcional)"></div>
+    </fieldset>
+    <div class="q"><label for="ref">¿Conoces a alguien que también necesite seguro? <span class="opt">(opcional)</span></label><textarea id="ref" name="extras.referidos" placeholder="Nombre y teléfono"></textarea></div>
+    <div class="q"><label for="dud">¿Hubo alguna pregunta que no supiste contestar? <span class="opt">(opcional)</span></label><textarea id="dud" name="extras.dudas" placeholder="La vemos juntos por teléfono"></textarea></div>
+
+    <fieldset class="q" data-req><legend>¿Quién está llenando esto?</legend>
+      <div class="chips stack">
+        <label class="chip"><input type="radio" name="consentimiento.calidad" value="titular"><span>Yo, para mí o mi familia</span></label>
+        <label class="chip"><input type="radio" name="consentimiento.calidad" value="representante"><span>Lo lleno por otra persona (familiar o representante)</span></label>
+      </div><div class="err-msg">Elige una opción.</div>
+      <div class="reveal" data-when="consentimiento.calidad=representante"><input name="consentimiento.representante" type="text" placeholder="Tu nombre y relación con la persona"></div>
+    </fieldset>
+
+    <fieldset class="q" data-req><legend>Permisos</legend>
+      <div class="chips stack">
+        <label class="chip"><input type="checkbox" name="consentimiento.acepta_contacto" value="si"><span>Autorizo a Manuel De Sousa Ins, agente de seguros con licencia, a contactarme por WhatsApp, llamada, texto o correo sobre opciones de seguro, y a usar estos datos para buscar planes para mi familia.</span></label>
+        <label class="chip"><input type="checkbox" name="consentimiento.exactitud" value="si"><span>Lo que escribí es correcto según lo que sé.</span></label>
+      </div>
+      <small class="legal">Puedes pedir que dejemos de contactarte cuando quieras. Pueden aplicar cargos de mensajes y datos. Enviar esto no te inscribe en ningún plan.</small>
+      <div class="err-msg">Marca las dos casillas para poder enviar.</div>
+    </fieldset>
+    <div class="fail" id="fail" role="alert"></div>
+  </section>
+
+  <!-- ============ LISTO ============ -->
+  <section class="step" data-step="7">
+    <div class="done-wrap">
+      <div class="check"><svg viewBox="0 0 40 30" fill="none"><path d="M3 15l11 11L37 3" stroke="#12303A" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <h2 id="doneH">Listo, ya lo tengo.</h2>
+      <p class="lead" id="doneP">Recibí tu información.</p>
+      <div class="next"><b>Lo que sigue</b>
+        <ol>
+          <li>Reviso tu información y busco los planes de tu zona.</li>
+          <li id="doneVia">Te contacto con tus opciones.</li>
+          <li>Las vemos juntos y escoges con calma. Nada se inscribe sin tu permiso.</li>
+        </ol>
+      </div>
+      <div class="sign"><b>Manuel De Sousa Ins</b>Agente de seguros con licencia</div>
+    </div>
+  </section>
+</form>
+</main>
+
+<nav class="nav" id="nav">
+  <div class="nav-in">
+    <button type="button" class="btn back" id="back" hidden>Atrás</button>
+    <button type="button" class="btn go" id="next">Empezar</button>
+  </div>
+  <div class="saved" id="saved">Tus respuestas se guardan en este teléfono mientras llenas.</div>
+</nav>
+
+<template id="tplPerson">
+  <div class="person" data-i>
+    <div class="person-h"><span class="tok" data-tok>?</span><h3><span data-title>Persona</span><span class="age" data-age></span></h3><button type="button" class="rm" data-rm>Quitar</button></div>
+    <div class="q"><label>Nombre</label><input type="text" data-k="nombre" required autocomplete="off"><div class="err-msg">Escribe el nombre.</div></div>
+    <div class="q" data-relq><label>Relación contigo</label>
+      <select data-k="relacion" required>
+        <option value="">Elige…</option><option value="conyuge">Esposo(a) o pareja</option><option value="hijo">Hijo(a)</option><option value="padre_madre">Padre o madre</option><option value="hermano">Hermano(a)</option><option value="otro">Otro familiar</option>
+      </select><div class="err-msg">Elige la relación.</div></div>
+    <p data-fillnote hidden style="margin:-4px 0 18px;color:var(--muted)">Como el seguro no es para ti, solo necesito tu nombre.</p>
+    <div class="q" data-full><label>Fecha de nacimiento</label><input type="date" data-k="fecha_nacimiento" required><div class="err-msg">Revisa la fecha.</div></div>
+    <fieldset class="q" data-preq data-full><legend>Sexo</legend><div class="chips">
+      <label class="chip"><input type="radio" data-k="sexo" value="F"><span>Femenino</span></label>
+      <label class="chip"><input type="radio" data-k="sexo" value="M"><span>Masculino</span></label></div><div class="err-msg">Elige uno.</div></fieldset>
+    <fieldset class="q" data-preq data-full data-need><legend>¿Necesita seguro médico?</legend><div class="chips">
+      <label class="chip"><input type="radio" data-k="necesita_seguro" value="si"><span>Sí</span></label>
+      <label class="chip"><input type="radio" data-k="necesita_seguro" value="no"><span>No, ya tiene</span></label></div><div class="err-msg">Elige una opción.</div></fieldset>
+    <fieldset class="q" data-preq data-full><legend>¿Ha usado tabaco 4 veces o más por semana en los últimos 6 meses?</legend><div class="chips">
+      <label class="chip"><input type="radio" data-k="tabaco" value="si"><span>Sí</span></label>
+      <label class="chip"><input type="radio" data-k="tabaco" value="no"><span>No</span></label></div><div class="err-msg">Elige una opción.</div></fieldset>
+    <div class="q" data-full><label>Estatus en EE. UU.<span class="hint">Cambia qué ayudas aplican. No pedimos documentos ni números.</span></label>
+      <select data-k="estatus" required>
+        <option value="">Elige…</option><option value="ciudadano">Ciudadano(a)</option><option value="residente">Residente (green card)</option><option value="permiso_trabajo">Permiso de trabajo, TPS, asilo o parole</option><option value="ninguno">Ninguno por ahora</option><option value="no_se">No sé</option>
+      </select><div class="err-msg">Elige una opción.</div></div>
+    <details class="more" data-full><summary>Estatura y peso (opcional)</summary>
+      <div class="row" style="margin-top:12px">
+        <div class="q"><label>Estatura</label><div class="row" style="gap:6px"><select data-k="estatura_pies"><option value="">pies</option><option>4</option><option>5</option><option>6</option><option>7</option></select><select data-k="estatura_pulgadas"><option value="">pulg.</option><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option></select></div></div>
+        <div class="q"><label>Peso (libras)</label><input type="number" inputmode="numeric" min="1" max="700" data-k="peso_lb"></div>
+      </div>
+    </details>
+  </div>
+</template>
+
+<script>
+(() => {
+  // ---------- Configuración ----------
+  const SUPABASE_URL = "https://ylpiolojgobjuukcwujz.supabase.co";
+  const SUPABASE_KEY = "sb_publishable_Q6Z7j7Fqcw2PxeKPNTAidw_6l4GtI2b"; // pública: solo permite insertar solicitudes
+  const DRAFT_KEY = "oe2027_borrador_v1";
+  const TOTAL = 6;
+
+  const STATES = [["AL","Alabama"],["AK","Alaska"],["AZ","Arizona"],["AR","Arkansas"],["CA","California"],["CO","Colorado"],["CT","Connecticut"],["DE","Delaware"],["DC","Distrito de Columbia"],["FL","Florida"],["GA","Georgia"],["HI","Hawái"],["ID","Idaho"],["IL","Illinois"],["IN","Indiana"],["IA","Iowa"],["KS","Kansas"],["KY","Kentucky"],["LA","Luisiana"],["ME","Maine"],["MD","Maryland"],["MA","Massachusetts"],["MI","Míchigan"],["MN","Minnesota"],["MS","Misisipi"],["MO","Misuri"],["MT","Montana"],["NE","Nebraska"],["NV","Nevada"],["NH","Nuevo Hampshire"],["NJ","Nueva Jersey"],["NM","Nuevo México"],["NY","Nueva York"],["NC","Carolina del Norte"],["ND","Dakota del Norte"],["OH","Ohio"],["OK","Oklahoma"],["OR","Oregón"],["PA","Pensilvania"],["RI","Rhode Island"],["SC","Carolina del Sur"],["SD","Dakota del Sur"],["TN","Tennessee"],["TX","Texas"],["UT","Utah"],["VT","Vermont"],["VA","Virginia"],["WA","Washington"],["WV","Virginia Occidental"],["WI","Wisconsin"],["WY","Wyoming"]];
+
+  const HEALTH = [
+    {k:"medicos", q:"¿Hay médicos u hospitales que quieran conservar?", ask:"¿Cuáles? Nombre del médico o clínica y ciudad", ph:"Ej.: Dra. Pérez, AdventHealth Kissimmee"},
+    {k:"medicamentos", q:"¿Alguien toma medicinas de forma regular?", ask:"¿Quién, qué medicina y qué dosis?", ph:"Ej.: Mamá — metformina 500 mg"},
+    {k:"condiciones", q:"¿Alguien tiene una condición diagnosticada?", ask:"¿Quién y cuál?", ph:"Ej.: Yo — presión alta"},
+    {k:"tratamientos", q:"¿Hay tratamientos o cirugías previstas para 2027?", ask:"¿Quién y qué tratamiento?", ph:"Ej.: Mi hijo — cirugía de rodilla en marzo"},
+    {k:"embarazo", q:"¿Alguien está embarazada o planea estarlo en 2027?", ask:"¿Quién y fecha aproximada?", ph:"Ej.: Yo — bebé para junio"}
+  ];
+
+  const $ = (s, r=document) => r.querySelector(s);
+  const $$ = (s, r=document) => [...r.querySelectorAll(s)];
+  const form = $("#f");
+  let step = 1;
+  let people = [];
+
+  // ---------- Construir selects y salud ----------
+  $("#estado").innerHTML = '<option value="">Elige…</option>' + STATES.map(([c,n]) => `<option value="${c}">${n}</option>`).join("");
+  const nums = (from,to) => Array.from({length:to-from+1},(_,i)=>from+i);
+  $("#hh").innerHTML = '<option value="">Elige…</option>' + nums(1,10).map(n=>`<option>${n}</option>`).join("");
+  $("#dep").innerHTML = nums(0,9).map(n=>`<option>${n}</option>`).join("");
+  $("#health").innerHTML = HEALTH.map(h => `
+    <fieldset class="q" data-req><legend>${h.q}</legend>
+      <div class="chips">
+        <label class="chip"><input type="radio" name="salud.${h.k}.respuesta" value="si"><span>Sí</span></label>
+        <label class="chip"><input type="radio" name="salud.${h.k}.respuesta" value="no"><span>No</span></label>
+      </div><div class="err-msg">Elige sí o no.</div>
+      <div class="reveal q" data-when="salud.${h.k}.respuesta=si" data-reqtext style="margin-bottom:0">
+        <label style="font-weight:700;display:block;margin-bottom:8px">${h.ask}</label>
+        <textarea name="salud.${h.k}.detalle" placeholder="${h.ph}"></textarea>
+        <div class="err-msg">Cuéntame un poco aquí.</div>
+      </div>
+    </fieldset>`).join("");
+
+  // ---------- Personas ----------
+  const newPerson = () => ({nombre:"",relacion: people.length ? "" : "titular",fecha_nacimiento:"",sexo:"",necesita_seguro:"si",tabaco:"",estatus:"",estatura_pies:"",estatura_pulgadas:"",peso_lb:""});
+  const initials = n => (n||"").trim().split(/\s+/).filter(Boolean).slice(0,2).map(w=>w[0].toUpperCase()).join("") || "?";
+  const ageOf = d => { if(!d) return null; const b=new Date(d+"T12:00"), t=new Date(); if(isNaN(b)) return null; let a=t.getFullYear()-b.getFullYear(); const m=t.getMonth()-b.getMonth(); if(m<0||(m===0&&t.getDate()<b.getDate())) a--; return a; };
+
+  const mode = () => val("objetivo.para_quien");
+  const LEADS = {
+    solo_yo: "Solo necesito tus datos. A los demás de tu hogar los cuentas en el siguiente paso.",
+    yo_y_familia: "Una tarjeta por persona, empezando por ti. Puedes agregar hasta 8.",
+    otros_familia: "Primero tú, que estás llenando esto. Después agrega a cada persona que necesita seguro."
+  };
+  function renderPeople(){
+    const m = mode();
+    if (m === "solo_yo" && people.length > 1) people = people.slice(0,1);
+    if (m === "otros_familia" && people.length < 2) people.push(newPerson());
+    $("#pLead").textContent = LEADS[m] || LEADS.yo_y_familia;
+    $("#addP").textContent = m === "otros_familia" ? "+ Agregar a otra persona que necesita seguro" : "+ Agregar otra persona";
+    const box = $("#people"); box.innerHTML = "";
+    people.forEach((p, i) => {
+      const node = $("#tplPerson").content.firstElementChild.cloneNode(true);
+      node.dataset.i = i;
+      const me = i === 0;
+      node.querySelector("[data-title]").textContent = me ? "Tú" : (p.nombre || `Persona ${i+1}`);
+      if (me) {
+        node.querySelector("[data-relq]").remove(); node.querySelector("[data-rm]").remove();
+        if (m === "otros_familia") {
+          p.necesita_seguro = "no";
+          $$("[data-full]", node).forEach(e => e.hidden = true);
+          node.querySelector("[data-fillnote]").hidden = false;
+        } else {
+          p.necesita_seguro = "si";
+          node.querySelector("[data-need]").hidden = true;
+        }
+      }
+      $$("[data-k]", node).forEach(el => {
+        const k = el.dataset.k;
+        if (el.type === "radio") { el.name = `p${i}_${k}`; el.checked = p[k] === el.value; }
+        else el.value = p[k] ?? "";
+      });
+      const today = new Date().toISOString().slice(0,10);
+      node.querySelector('[data-k="fecha_nacimiento"]').max = today;
+      node.querySelector('[data-k="fecha_nacimiento"]').min = "1900-01-01";
+      paintPersonHead(node, p);
+      box.appendChild(node);
+    });
+    $("#addP").hidden = people.length >= 8 || m === "solo_yo";
+    renderFamily();
+  }
+  function paintPersonHead(node, p){
+    const tok = node.querySelector("[data-tok]");
+    tok.textContent = initials(p.nombre);
+    tok.classList.toggle("no", p.necesita_seguro === "no");
+    const a = ageOf(p.fecha_nacimiento);
+    node.querySelector("[data-age]").textContent = a !== null && a >= 0 ? `${a} ${a===1?"año":"años"}` : "";
+    if (+node.dataset.i > 0) node.querySelector("[data-title]").textContent = p.nombre || `Persona ${+node.dataset.i+1}`;
+  }
+  $("#people").addEventListener("input", onPersonEdit);
+  $("#people").addEventListener("change", onPersonEdit);
+  function onPersonEdit(e){
+    const el = e.target, card = el.closest(".person"); if(!card || !el.dataset.k) return;
+    const p = people[+card.dataset.i];
+    if (el.type === "radio") { if (el.checked) p[el.dataset.k] = el.value; } else p[el.dataset.k] = el.value;
+    paintPersonHead(card, p); renderFamily(); clearBad(el); saveDraft();
+  }
+  $("#people").addEventListener("click", e => {
+    const rm = e.target.closest("[data-rm]"); if(!rm) return;
+    const i = +rm.closest(".person").dataset.i;
+    people.splice(i,1); renderPeople(); saveDraft();
+  });
+  $("#addP").addEventListener("click", () => {
+    people.push(newPerson()); renderPeople(); saveDraft();
+    const last = $$("#people .person").pop(); last.scrollIntoView({behavior:"smooth",block:"start"});
+    setTimeout(()=>last.querySelector('[data-k="nombre"]').focus({preventScroll:true}), 350);
+  });
+
+  function renderFamily(){
+    const fam = $("#family");
+    const named = people.filter(p => p.nombre.trim());
+    if (!named.length) { fam.innerHTML = ""; return; }
+    fam.innerHTML = `<span class="lbl">Tu familia</span>` + named.map(p => `<span class="tok${p.necesita_seguro==="no"?" no":""}" title="${p.nombre.replace(/"/g,"")}">${initials(p.nombre)}</span>`).join("");
+  }
+  // el nombre del contacto alimenta "Tú"
+  $("#nombre").addEventListener("input", e => { if (people[0] && (!people[0].nombre || people[0]._fromContact)) { people[0].nombre = e.target.value; people[0]._fromContact = true; renderFamily(); } });
+
+  // ---------- Formato de campos ----------
+  $("#tel").addEventListener("input", e => {
+    const d = e.target.value.replace(/\D/g,"").replace(/^1(?=\d{10})/,"").slice(0,10);
+    e.target.value = d.length > 6 ? `(${d.slice(0,3)}) ${d.slice(3,6)}-${d.slice(6)}` : d.length > 3 ? `(${d.slice(0,3)}) ${d.slice(3)}` : d;
+  });
+  $("#zip").addEventListener("input", e => e.target.value = e.target.value.replace(/\D/g,"").slice(0,5));
+
+  // ---------- Mostrar/ocultar los "¿cuáles?" ----------
+  function val(name){
+    const els = $$(`[name="${name}"]`, form); if(!els.length) return "";
+    if (els[0].type === "radio") return (els.find(e=>e.checked)||{}).value || "";
+    if (els[0].type === "checkbox") return els.filter(e=>e.checked).map(e=>e.value);
+    return els[0].value;
+  }
+  function updateReveals(){
+    $$("[data-when]", form).forEach(r => {
+      const neg = r.dataset.when.includes("!=");
+      const [name, vals] = r.dataset.when.split(neg ? "!=" : "=");
+      const v = val(name), list = vals.split(",");
+      const show = neg ? (v !== "" && !list.includes(v)) : list.includes(v);
+      r.classList.toggle("on", show);
+    });
+  }
+  // "Nada de esto" / "Sin ingresos" / "Solo el seguro médico" desmarcan lo demás
+  form.addEventListener("change", e => {
+    const el = e.target;
+    if (el.type === "checkbox" && el.name && !el.name.startsWith("consentimiento")) {
+      const group = $$(`[name="${el.name}"]`, form);
+      if (el.checked && el.value === "ninguno") group.forEach(g => { if (g !== el) g.checked = false; });
+      else if (el.checked) group.forEach(g => { if (g.value === "ninguno") g.checked = false; });
+    }
+    if (el.name === "objetivo.para_quien" && people.length) renderPeople();
+    updateReveals(); clearBad(el); saveDraft();
+  });
+  form.addEventListener("input", e => { if (e.target.name) { clearBad(e.target); saveDraft(); } });
+
+  // ---------- Validación ----------
+  function clearBad(el){ const q = el.closest(".bad"); if(q) q.classList.remove("bad"); }
+  function isVisible(el){ return !!(el.offsetParent || el.getClientRects().length); }
+  function validate(n){
+    const sec = $(`.step[data-step="${n}"]`); let bad = [];
+    $$(".bad", sec).forEach(b => b.classList.remove("bad"));
+    const mark = el => { const q = el.closest(".reveal.q") || el.closest(".q"); if (q && !bad.includes(q)) { q.classList.add("bad"); bad.push(q); } };
+
+    $$("input[required], select[required]", sec).forEach(el => { if (isVisible(el) && !String(el.value).trim()) mark(el); });
+    $$("[data-type]", sec).forEach(el => {
+      const v = el.value.trim();
+      if (el.dataset.type === "phone" && v.replace(/\D/g,"").length !== 10) mark(el);
+      if (el.dataset.type === "zip" && !/^\d{5}$/.test(v)) mark(el);
+      if (el.dataset.type === "email" && v && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v)) mark(el);
+    });
+    $$("fieldset[data-req]", sec).forEach(fs => {
+      if (!isVisible(fs)) return;
+      const inputs = $$(":scope > .chips input", fs);
+      if (!inputs.length) return;
+      if (fs.querySelector('[name^="consentimiento.acepta"]')) { if (!inputs.every(i=>i.checked)) mark(fs); return; }
+      if (!inputs.some(i => i.checked)) mark(fs);
+    });
+    $$(".reveal.on[data-reqtext] textarea", sec).forEach(t => { if (!t.value.trim()) mark(t); });
+
+    if (n === 3) {
+      $$(".person", sec).forEach(card => {
+        $$("fieldset[data-preq]", card).forEach(fs => { if (isVisible(fs) && !$$("input", fs).some(i=>i.checked)) mark(fs); });
+        const d = card.querySelector('[data-k="fecha_nacimiento"]'); const a = ageOf(d.value);
+        if (d.value && (a === null || a < 0 || a > 115)) mark(d);
+      });
+      if (!people.some(p => p.necesita_seguro === "si")) { const w = $("#addWrap"); w.classList.add("bad"); bad.push(w); }
+    }
+    if (bad.length) {
+      bad[0].scrollIntoView({behavior:"smooth", block:"center"});
+      const f = bad[0].querySelector("input:not([type=radio]):not([type=checkbox]), select, textarea, input");
+      if (f) setTimeout(()=>f.focus({preventScroll:true}), 300);
+    }
+    return !bad.length;
+  }
+
+  // ---------- Navegación ----------
+  // Si nadie que necesita seguro tiene estatus, no se preguntan impuestos ni ingresos (van directo a planes privados y complementarios).
+  const sinACA = () => { const need = people.filter(p => p.necesita_seguro === "si"); return need.length > 0 && need.every(p => p.estatus === "ninguno"); };
+  const flow = () => sinACA() ? [1,2,3,5,6] : [1,2,3,4,5,6];
+  function go(n){
+    step = n;
+    $$(".step").forEach(s => s.classList.toggle("on", +s.dataset.step === n));
+    const done = n > TOTAL, f = flow(), idx = f.indexOf(n);
+    $("#stepTxt").textContent = done ? "Enviado" : `Paso ${idx+1} de ${f.length}`;
+    const bar = $("#bar"); bar.style.gridTemplateColumns = `repeat(${f.length},1fr)`;
+    bar.innerHTML = f.map((s,i) => `<i class="${done || i < idx ? "done" : i === idx ? "now" : ""}"></i>`).join("");
+    $("#hcq").hidden = sinACA();
+    $("#back").hidden = n === 1 || done;
+    $("#next").textContent = n === 1 ? "Empezar" : n === TOTAL ? "Enviar mi información" : "Seguir";
+    $("#nav").hidden = done;
+    if (n === 3) {
+      if (!people.length) { people.push(newPerson()); people[0].nombre = $("#nombre").value; people[0]._fromContact = true; }
+      renderPeople();
+    }
+    window.scrollTo({top:0, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth"});
+    const h = $(`.step[data-step="${n}"] h2`); if (h) { h.tabIndex = -1; h.focus({preventScroll:true}); }
+    saveDraft();
+  }
+  $("#next").addEventListener("click", () => {
+    if (!validate(step)) return;
+    const f = flow();
+    if (step < TOTAL) go(f[f.indexOf(step)+1]); else submit();
+  });
+  $("#back").addEventListener("click", () => { const f = flow(); go(f[Math.max(0, f.indexOf(step)-1)]); });
+
+  // ---------- Armar los datos ----------
+  function setPath(obj, path, v){ const ks = path.split("."); let o = obj; ks.slice(0,-1).forEach(k => o = o[k] ??= {}); o[ks.at(-1)] = v; }
+  function collect(){
+    const out = {};
+    const names = [...new Set($$("[name]", form).map(e=>e.name))].filter(n => n.includes(".") );
+    names.forEach(n => {
+      const els = $$(`[name="${n}"]`, form), first = els[0];
+      let v = val(n);
+      if (first.dataset.num !== undefined && v !== "") v = Number(v);
+      if (first.type === "checkbox" && n.startsWith("consentimiento.")) v = first.checked;
+      // no guardar detalles escondidos (por ejemplo, si cambiaron a "No")
+      const rev = first.closest(".reveal"); if (rev && !rev.classList.contains("on")) v = (first.type==="checkbox") ? [] : "";
+      setPath(out, n, v);
+    });
+    out.contacto.telefono = out.contacto.telefono.replace(/\D/g,"");
+    out.contacto.email = out.contacto.email.trim() || null;
+    out.miembros = people.map(({_fromContact, ...p}, i) => ({
+      ...p, relacion: i === 0 ? "titular" : p.relacion, edad: ageOf(p.fecha_nacimiento),
+      estatura_pies: p.estatura_pies ? +p.estatura_pies : null, estatura_pulgadas: p.estatura_pulgadas ? +p.estatura_pulgadas : null, peso_lb: p.peso_lb ? +p.peso_lb : null
+    }));
+    out.objetivo.ruta = sinACA() ? "sin_estatus" : "completa";
+    if (sinACA()) { out.hogar = { omitido: "sin_estatus" }; delete out.cobertura_actual.cuenta_healthcare; }
+    out.consentimiento = { ...out.consentimiento, fecha: new Date().toISOString(), version_texto: "oe2027-v1", pagina: location.href.split("?")[0] };
+    out.extras.utm = Object.fromEntries(new URLSearchParams(location.search));
+    return out;
+  }
+
+  async function submit(){
+    const fail = $("#fail"); fail.classList.remove("on");
+    if (form.website.value) { go(TOTAL+1); return; } // robot
+    const btn = $("#next"); btn.disabled = true; btn.textContent = "Enviando…";
+    const d = collect();
+    const row = { contacto:d.contacto, objetivo:d.objetivo, miembros:d.miembros, hogar:d.hogar, cobertura_actual:d.cobertura_actual, salud:d.salud, extras:d.extras, consentimiento:d.consentimiento };
+    try {
+      const r = await fetch(`${SUPABASE_URL}/rest/v1/solicitudes_oe`, {
+        method:"POST",
+        headers:{ "apikey":SUPABASE_KEY, "Content-Type":"application/json", "Prefer":"return=minimal" },
+        body: JSON.stringify(row)
+      });
+      if (!r.ok) throw new Error(await r.text());
+      try { localStorage.removeItem(DRAFT_KEY); } catch(_) {}
+      const first = d.contacto.nombre.trim().split(/\s+/)[0];
+      $("#doneH").textContent = `Listo, ${first}. Ya lo tengo.`;
+      $("#doneP").textContent = `Recibí la información de ${d.miembros.length} ${d.miembros.length===1?"persona":"personas"} en ${STATES.find(s=>s[0]===d.contacto.estado)?.[1] || d.contacto.estado}.`;
+      const via = {whatsapp:"por WhatsApp", llamada:"con una llamada", texto:"por mensaje de texto", correo:"por correo"}[d.contacto.via];
+      const hor = {manana:"en la mañana", tarde:"en la tarde", noche:"en la noche", cualquiera:""}[d.contacto.horario];
+      $("#doneVia").textContent = `Te escribo ${via} ${hor} con tus opciones.`.replace(/\s+/g," ").replace(" con tus", " con tus");
+      if (d.contacto.via === "llamada") $("#doneVia").textContent = `Te llamo ${hor} con tus opciones.`.replace(/\s+/g," ");
+      go(TOTAL+1);
+    } catch (err) {
+      console.error(err);
+      fail.textContent = "No se pudo enviar. Revisa tu conexión a internet y toca Enviar otra vez. Tus respuestas siguen guardadas.";
+      fail.classList.add("on"); fail.scrollIntoView({behavior:"smooth",block:"center"});
+      btn.disabled = false; btn.textContent = "Enviar mi información";
+    }
+  }
+
+  // ---------- Borrador en el teléfono ----------
+  let t;
+  function saveDraft(){
+    clearTimeout(t);
+    t = setTimeout(() => {
+      try {
+        const fields = {};
+        $$("[name]", form).forEach(el => {
+          if (!el.name.includes(".")) return;
+          if (el.type === "radio" || el.type === "checkbox") { if (el.checked) (fields[el.name] ??= []).push(el.value); }
+          else fields[el.name] = el.value;
+        });
+        localStorage.setItem(DRAFT_KEY, JSON.stringify({fields, people, step: Math.min(step, TOTAL)}));
+      } catch(_) {}
+    }, 250);
+  }
+  function loadDraft(){
+    try {
+      const d = JSON.parse(localStorage.getItem(DRAFT_KEY) || "null"); if (!d) return;
+      Object.entries(d.fields || {}).forEach(([n, v]) => {
+        $$(`[name="${n}"]`, form).forEach(el => {
+          if (el.type === "radio" || el.type === "checkbox") el.checked = v.includes(el.value);
+          else el.value = v;
+        });
+      });
+      people = Array.isArray(d.people) ? d.people : [];
+      if (people.length) renderPeople();
+      updateReveals();
+      if (d.step > 1) go(d.step);
+    } catch(_) {}
+  }
+  loadDraft();
+  updateReveals();
+})();
+</script>
+</body>
+</html>
