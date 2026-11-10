@@ -454,9 +454,33 @@ small.legal{display:block;font-size:13.5px;color:var(--muted);line-height:1.5;ma
     {k:"medicos", q:"¿Hay médicos u hospitales que quieran conservar?", ask:"¿Cuáles? Nombre del médico o clínica y ciudad", ph:"Ej.: Dra. Pérez, AdventHealth Kissimmee"},
     {k:"medicamentos", q:"¿Alguien toma medicinas de forma regular?", ask:"¿Quién, qué medicina y qué dosis?", ph:"Ej.: Mamá — metformina 500 mg"},
     {k:"condiciones", q:"¿Alguien tiene una condición diagnosticada?", ask:"¿Quién y cuál?", ph:"Ej.: Yo — presión alta"},
-    {k:"tratamientos", q:"¿Hay tratamientos o cirugías previstas para 2027?", ask:"¿Quién y qué tratamiento?", ph:"Ej.: Mi hijo — cirugía de rodilla en marzo"},
-    {k:"embarazo", q:"¿Alguien está embarazada o planea estarlo en 2027?", ask:"¿Quién y fecha aproximada?", ph:"Ej.: Yo — bebé para junio"}
+    {k:"tratamientos", q:"¿Hay tratamientos o cirugías previstas para 2027?", ask:"¿Quién y qué tratamiento?", ph:"Ej.: Mi hijo — cirugía de rodilla en marzo"}
   ];
+  // Gravedad de la condición: mismos valores que usa Nami (grave / controlada)
+  const GRAV = `
+    <fieldset class="q" data-req style="margin:16px 0 0"><legend>¿Cómo está esa condición?<span class="hint">Si hay varias, piensa en la más seria.</span></legend>
+      <div class="chips stack">
+        <label class="chip"><input type="radio" name="salud.condiciones.gravedad" value="controlada"><span>Controlada: presión, prediabetes o diabetes bajo control con medicina o dieta</span></label>
+        <label class="chip"><input type="radio" name="salud.condiciones.gravedad" value="grave"><span>Seria: cáncer, problemas del corazón, VIH o diabetes que no está controlada</span></label>
+        <label class="chip"><input type="radio" name="salud.condiciones.gravedad" value="no_se"><span>No sé</span></label>
+      </div><div class="err-msg">Elige una opción.</div>
+    </fieldset>`;
+  const EMBARAZO = `
+    <fieldset class="q" data-req><legend>¿Alguien está embarazada o planea estarlo en 2027?</legend>
+      <div class="chips stack">
+        <label class="chip"><input type="radio" name="salud.embarazo.respuesta" value="embarazada"><span>Sí, ya está embarazada</span></label>
+        <label class="chip"><input type="radio" name="salud.embarazo.respuesta" value="planea"><span>Planea embarazarse</span></label>
+        <label class="chip"><input type="radio" name="salud.embarazo.respuesta" value="no"><span>No</span></label>
+      </div><div class="err-msg">Elige una opción.</div>
+      <div class="reveal" data-when="salud.embarazo.respuesta=embarazada">
+        <div class="q" style="margin-bottom:12px"><label for="parto" style="font-weight:700;display:block;margin-bottom:8px">Fecha estimada de parto</label><input id="parto" type="date" name="salud.embarazo.fecha_parto" required data-type="parto"><div class="err-msg">Escribe la fecha que te dio el médico. Aproximada está bien.</div></div>
+      </div>
+      <div class="reveal q" data-when="salud.embarazo.respuesta=embarazada,planea" data-reqtext style="margin-bottom:0">
+        <label style="font-weight:700;display:block;margin-bottom:8px">¿Quién? Si lo planean, ¿para cuándo más o menos?</label>
+        <textarea name="salud.embarazo.detalle" placeholder="Ej.: Yo — queremos buscarlo a mitad de año"></textarea>
+        <div class="err-msg">Cuéntame un poco aquí.</div>
+      </div>
+    </fieldset>`;
 
   const $ = (s, r=document) => r.querySelector(s);
   const $$ = (s, r=document) => [...r.querySelectorAll(s)];
@@ -479,8 +503,9 @@ small.legal{display:block;font-size:13.5px;color:var(--muted);line-height:1.5;ma
         <label style="font-weight:700;display:block;margin-bottom:8px">${h.ask}</label>
         <textarea name="salud.${h.k}.detalle" placeholder="${h.ph}"></textarea>
         <div class="err-msg">Cuéntame un poco aquí.</div>
+        ${h.k === "condiciones" ? GRAV : ""}
       </div>
-    </fieldset>`).join("");
+    </fieldset>`).join("") + EMBARAZO;
 
   // ---------- Personas ----------
   const newPerson = () => ({nombre:"",relacion: people.length ? "" : "titular",fecha_nacimiento:"",sexo:"",necesita_seguro:"si",tabaco:"",estatus:"",estatura_pies:"",estatura_pulgadas:"",peso_lb:""});
@@ -608,7 +633,7 @@ small.legal{display:block;font-size:13.5px;color:var(--muted);line-height:1.5;ma
   function validate(n){
     const sec = $(`.step[data-step="${n}"]`); let bad = [];
     $$(".bad", sec).forEach(b => b.classList.remove("bad"));
-    const mark = el => { const q = el.closest(".reveal.q") || el.closest(".q"); if (q && !bad.includes(q)) { q.classList.add("bad"); bad.push(q); } };
+    const mark = el => { const q = el.matches(".q") ? el : (el.closest(".reveal.q") || el.closest(".q")); if (q && !bad.includes(q)) { q.classList.add("bad"); bad.push(q); } };
 
     $$("input[required], select[required]", sec).forEach(el => { if (isVisible(el) && !String(el.value).trim()) mark(el); });
     $$("[data-type]", sec).forEach(el => {
@@ -616,6 +641,10 @@ small.legal{display:block;font-size:13.5px;color:var(--muted);line-height:1.5;ma
       if (el.dataset.type === "phone" && v.replace(/\D/g,"").length !== 10) mark(el);
       if (el.dataset.type === "zip" && !/^\d{5}$/.test(v)) mark(el);
       if (el.dataset.type === "email" && v && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v)) mark(el);
+      if (el.dataset.type === "parto" && v && isVisible(el)) {
+        const dias = (new Date(v + "T12:00") - new Date()) / 864e5;
+        if (isNaN(dias) || dias < -30 || dias > 300) mark(el);
+      }
     });
     $$("fieldset[data-req]", sec).forEach(fs => {
       if (!isVisible(fs)) return;
