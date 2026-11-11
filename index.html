@@ -272,16 +272,21 @@ small.legal{display:block;font-size:13.5px;color:var(--muted);line-height:1.5;ma
         <label class="chip"><input type="radio" name="hogar.declaracion" value="no_se"><span>No sé</span></label>
       </div><div class="err-msg">Elige una opción.</div>
     </fieldset>
-    <div class="q"><label for="ing">Ingreso del hogar al mes, antes de impuestos<span class="hint">Suma de todos en la declaración. Aproximado está bien.</span></label><div class="money"><input id="ing" name="hogar.ingreso_mensual" type="number" inputmode="numeric" min="0" step="50" required data-num></div><div class="err-msg">Escribe un número aproximado. Si no hay ingresos, pon 0.</div></div>
-    <fieldset class="q" data-req><legend>¿De dónde vienen los ingresos? <span class="opt">Marca todas las que apliquen.</span></legend>
+    <fieldset class="q" data-req><legend>¿Cómo les pagan? <span class="opt">Todos los de tu declaración. Marca todas las que apliquen.</span></legend>
       <div class="chips">
-        <label class="chip"><input type="checkbox" name="hogar.fuentes_ingreso" value="w2"><span>Empleo (W-2)</span></label>
-        <label class="chip"><input type="checkbox" name="hogar.fuentes_ingreso" value="cuenta_propia"><span>Cuenta propia (1099)</span></label>
-        <label class="chip"><input type="checkbox" name="hogar.fuentes_ingreso" value="pension"><span>Pensión o Seguro Social</span></label>
+        <label class="chip"><input type="checkbox" name="hogar.fuentes_ingreso" value="w2"><span>Empleado (W-2): me descuentan impuestos del cheque</span></label>
+        <label class="chip"><input type="checkbox" name="hogar.fuentes_ingreso" value="cuenta_propia"><span>Por cuenta propia (1099): contratista o negocio propio</span></label>
+        <label class="chip"><input type="checkbox" name="hogar.fuentes_ingreso" value="pension"><span>Pensión, Seguro Social o desempleo</span></label>
         <label class="chip"><input type="checkbox" name="hogar.fuentes_ingreso" value="otro"><span>Otro</span></label>
         <label class="chip"><input type="checkbox" name="hogar.fuentes_ingreso" value="ninguno"><span>Sin ingresos</span></label>
       </div><div class="err-msg">Marca al menos una.</div>
     </fieldset>
+    <div class="q reveal inc" data-src="w2"><label for="ingW2">Sueldo de empleo (W-2) al mes, antes de impuestos<span class="hint">Lo que dice el cheque antes de descuentos, sumando a todos los de la declaración. Si te descuentan 401(k) o el seguro del trabajo antes de impuestos, puedes restarlo.</span></label><div class="money"><input id="ingW2" name="hogar.ingreso_w2_mensual" type="number" inputmode="numeric" min="0" step="50" required data-num></div><div class="err-msg">Escribe un número aproximado.</div></div>
+    <div class="q reveal inc" data-src="cuenta_propia"><label for="ing1099">Ganancia por cuenta propia (1099) al mes, después de los gastos del negocio<span class="hint">Lo que te queda después de pagar lo del trabajo: trabajadores que te ayudan, materiales, gasolina o millaje, teléfono, herramientas. Pon lo mismo que vas a declarar en tus impuestos.</span></label><div class="money"><input id="ing1099" name="hogar.ganancia_1099_mensual" type="number" inputmode="numeric" min="0" step="50" required data-num></div><div class="err-msg">Escribe un número aproximado.</div>
+      <div class="note" style="margin-top:10px"><b>Importante si trabajas por tu cuenta.</b>La ayuda del gobierno se calcula con tu ganancia, no con lo que cobras. Si al final del año ganas más de lo que pusiste, tendrás que devolver la ayuda de más en tus impuestos.</div></div>
+    <div class="q reveal inc" data-src="pension,otro"><label for="ingOtro">Otros ingresos al mes<span class="hint">Pensión, Seguro Social, desempleo u otros. La manutención de hijos que recibes no cuenta.</span></label><div class="money"><input id="ingOtro" name="hogar.otros_ingresos_mensual" type="number" inputmode="numeric" min="0" step="50" required data-num></div><div class="err-msg">Escribe un número aproximado.</div></div>
+    <input type="hidden" id="ing" name="hogar.ingreso_mensual" data-num>
+    <p class="hint" id="ingTot" style="font-weight:700;margin:6px 0 0" hidden>Total al mes para calcular la ayuda: <span id="ingTotN">$0</span></p>
     <fieldset class="q" data-req><legend>¿Algo de esto pasó en 2026 o pasará pronto?</legend>
       <div class="chips">
         <label class="chip"><input type="checkbox" name="hogar.cambios" value="matrimonio_divorcio"><span>Matrimonio o divorcio</span></label>
@@ -324,6 +329,14 @@ small.legal{display:block;font-size:13.5px;color:var(--muted);line-height:1.5;ma
         <label class="chip"><input type="radio" name="cobertura_actual.seguro_trabajo.respuesta" value="no_se"><span>No sé</span></label>
       </div><div class="err-msg">Elige una opción.</div>
       <div class="reveal" data-when="cobertura_actual.seguro_trabajo.respuesta=si"><label class="q" style="display:block"><span style="display:block;font-weight:700;margin-bottom:8px">¿Quién?</span><input name="cobertura_actual.seguro_trabajo.quien" type="text" placeholder="Ej.: mi esposo"></label></div>
+    </fieldset>
+    <fieldset class="q" data-req id="mcq" hidden><legend>Para quien tiene 65 años o más: ¿tiene Medicare?<span class="hint" style="display:block;font-weight:400">Algunas personas de 65 o más pueden tener Obamacare si no tienen Medicare gratis.</span></legend>
+      <div class="chips stack">
+        <label class="chip"><input type="radio" name="cobertura_actual.medicare_65" value="ya_tiene"><span>Ya tiene Medicare</span></label>
+        <label class="chip"><input type="radio" name="cobertura_actual.medicare_65" value="trabajo_10"><span>No lo tiene, pero trabajó 10 años o más en EE. UU.</span></label>
+        <label class="chip"><input type="radio" name="cobertura_actual.medicare_65" value="no_califica"><span>No lo tiene: trabajó menos de 10 años o tiene menos de 5 años con estatus legal</span></label>
+        <label class="chip"><input type="radio" name="cobertura_actual.medicare_65" value="no_se"><span>No sé</span></label>
+      </div><div class="err-msg">Elige una opción.</div>
     </fieldset>
     <fieldset class="q" data-req id="hcq"><legend>¿Tienes cuenta en HealthCare.gov?</legend>
       <div class="chips">
@@ -472,8 +485,8 @@ small.legal{display:block;font-size:13.5px;color:var(--muted);line-height:1.5;ma
   const GRAV = `
     <fieldset class="q" data-req style="margin:16px 0 0"><legend>¿Cómo está esa condición?<span class="hint">Si hay varias, piensa en la más seria.</span></legend>
       <div class="chips stack">
-        <label class="chip"><input type="radio" name="salud.condiciones.gravedad" value="controlada"><span>Controlada: presión, prediabetes o diabetes bajo control con medicina o dieta</span></label>
-        <label class="chip"><input type="radio" name="salud.condiciones.gravedad" value="grave"><span>Seria: cáncer, problemas del corazón, VIH o diabetes que no está controlada</span></label>
+        <label class="chip"><input type="radio" name="salud.condiciones.gravedad" value="controlada"><span>Controlada: presión o prediabetes</span></label>
+        <label class="chip"><input type="radio" name="salud.condiciones.gravedad" value="grave"><span>Seria: diabetes (aunque esté controlada), cáncer, corazón o marcapasos, VIH</span></label>
         <label class="chip"><input type="radio" name="salud.condiciones.gravedad" value="no_se"><span>No sé</span></label>
       </div><div class="err-msg">Elige una opción.</div>
     </fieldset>`;
@@ -617,7 +630,18 @@ small.legal{display:block;font-size:13.5px;color:var(--muted);line-height:1.5;ma
     if (els[0].type === "checkbox") return els.filter(e=>e.checked).map(e=>e.value);
     return els[0].value;
   }
+  function updateIncome(){
+    const src = val("hogar.fuentes_ingreso"), arr = Array.isArray(src) ? src : [];
+    $$(".reveal.inc", form).forEach(r => r.classList.toggle("on", r.dataset.src.split(",").some(x => arr.includes(x))));
+    let tot = 0;
+    $$(".reveal.inc.on input", form).forEach(i => tot += Number(i.value) || 0);
+    const any = $$(".reveal.inc.on", form).length > 0;
+    $("#ing").value = (any || arr.includes("ninguno")) ? String(tot) : "";
+    $("#ingTot").hidden = !any;
+    $("#ingTotN").textContent = "$" + tot.toLocaleString("en-US");
+  }
   function updateReveals(){
+    updateIncome();
     $$("[data-when]", form).forEach(r => {
       const neg = r.dataset.when.includes("!=");
       const [name, vals] = r.dataset.when.split(neg ? "!=" : "=");
@@ -637,7 +661,7 @@ small.legal{display:block;font-size:13.5px;color:var(--muted);line-height:1.5;ma
     if (el.name === "objetivo.para_quien" && people.length) renderPeople();
     updateReveals(); clearBad(el); saveDraft();
   });
-  form.addEventListener("input", e => { if (e.target.name) { clearBad(e.target); saveDraft(); } });
+  form.addEventListener("input", e => { if (e.target.name) { if (e.target.closest(".reveal.inc")) updateIncome(); clearBad(e.target); saveDraft(); } });
 
   // ---------- Validación ----------
   function clearBad(el){ const q = el.closest(".bad"); if(q) q.classList.remove("bad"); }
@@ -695,6 +719,7 @@ small.legal{display:block;font-size:13.5px;color:var(--muted);line-height:1.5;ma
     const bar = $("#bar"); bar.style.gridTemplateColumns = `repeat(${f.length},1fr)`;
     bar.innerHTML = f.map((s,i) => `<i class="${done || i < idx ? "done" : i === idx ? "now" : ""}"></i>`).join("");
     $("#hcq").hidden = sinACA();
+    $("#mcq").hidden = !people.some(p => p.necesita_seguro === "si" && (ageOf(p.fecha_nacimiento) ?? 0) >= 65);
     $("#back").hidden = n === 1 || done;
     $("#next").textContent = n === 1 ? "Empezar" : n === TOTAL ? "Enviar mi información" : "Seguir";
     $("#nav").hidden = done;
@@ -733,6 +758,8 @@ small.legal{display:block;font-size:13.5px;color:var(--muted);line-height:1.5;ma
       ...p, relacion: i === 0 ? "titular" : p.relacion, edad: ageOf(p.fecha_nacimiento),
       estatura_pies: p.estatura_pies ? +p.estatura_pies : null, estatura_pulgadas: p.estatura_pulgadas ? +p.estatura_pulgadas : null, peso_lb: p.peso_lb ? +p.peso_lb : null
     }));
+    if ($("#mcq").hidden) out.cobertura_actual.medicare_65 = "";
+    if (out.hogar && out.hogar.ingreso_mensual === "") out.hogar.ingreso_mensual = null;
     out.objetivo.ruta = sinACA() ? "sin_estatus" : "completa";
     if (sinACA()) { out.hogar = { omitido: "sin_estatus" }; delete out.cobertura_actual.cuenta_healthcare; }
     out.consentimiento = { ...out.consentimiento, fecha: new Date().toISOString(), version_texto: "oe2027-v1", pagina: location.href.split("?")[0] };
@@ -899,6 +926,28 @@ small.legal{display:block;font-size:13.5px;color:var(--muted);line-height:1.5;ma
   "Suma de todos en la declaración. Aproximado está bien.": ["Total for everyone on the return. An estimate is fine.", "Soma de todos na declaração. Aproximado está bom."],
   "Escribe un número aproximado. Si no hay ingresos, pon 0.": ["Enter an approximate number. If there's no income, enter 0.", "Escreva um número aproximado. Se não houver renda, coloque 0."],
   "¿De dónde vienen los ingresos?": ["Where does the income come from?", "De onde vem a renda?"],
+  "¿Cómo les pagan?": ["How do you get paid?", "Como vocês recebem?"],
+  "Todos los de tu declaración. Marca todas las que apliquen.": ["Everyone on your tax return. Check all that apply.", "Todos da sua declaração. Marque todas as que se aplicam."],
+  "Empleado (W-2): me descuentan impuestos del cheque": ["Employee (W-2): taxes come out of my paycheck", "Empregado (W-2): descontam impostos do meu salário"],
+  "Por cuenta propia (1099): contratista o negocio propio": ["Self-employed (1099): contractor or own business", "Autônomo (1099): prestador ou negócio próprio"],
+  "Pensión, Seguro Social o desempleo": ["Pension, Social Security or unemployment", "Pensão, Social Security ou seguro-desemprego"],
+  "Sueldo de empleo (W-2) al mes, antes de impuestos": ["W-2 wages per month, before taxes", "Salário (W-2) por mês, antes dos impostos"],
+  "Lo que dice el cheque antes de descuentos, sumando a todos los de la declaración. Si te descuentan 401(k) o el seguro del trabajo antes de impuestos, puedes restarlo.": ["Your paycheck before deductions, for everyone on the return. If 401(k) or work insurance comes out before taxes, you can subtract it.", "O valor do salário antes dos descontos, somando todos da declaração. Se descontam 401(k) ou o seguro do trabalho antes dos impostos, pode subtrair."],
+  "Ganancia por cuenta propia (1099) al mes, después de los gastos del negocio": ["Self-employed (1099) profit per month, after business expenses", "Lucro como autônomo (1099) por mês, depois das despesas do negócio"],
+  "Lo que te queda después de pagar lo del trabajo: trabajadores que te ayudan, materiales, gasolina o millaje, teléfono, herramientas. Pon lo mismo que vas a declarar en tus impuestos.": ["What's left after paying for the work: helpers, materials, gas or mileage, phone, tools. Use the same number you'll report on your taxes.", "O que sobra depois de pagar o trabalho: ajudantes, materiais, gasolina ou milhagem, telefone, ferramentas. Coloque o mesmo que vai declarar nos impostos."],
+  "Importante si trabajas por tu cuenta.": ["Important if you're self-employed.", "Importante se você é autônomo."],
+  "La ayuda del gobierno se calcula con tu ganancia, no con lo que cobras. Si al final del año ganas más de lo que pusiste, tendrás que devolver la ayuda de más en tus impuestos.": ["Government help is based on your profit, not what you bill. If you end up earning more than you entered, you'll have to pay back the extra help on your taxes.", "A ajuda do governo é calculada com o seu lucro, não com o que você cobra. Se no fim do ano ganhar mais do que colocou, terá que devolver a ajuda a mais nos impostos."],
+  "Otros ingresos al mes": ["Other income per month", "Outras rendas por mês"],
+  "Pensión, Seguro Social, desempleo u otros. La manutención de hijos que recibes no cuenta.": ["Pension, Social Security, unemployment or other. Child support you receive doesn't count.", "Pensão, Social Security, seguro-desemprego ou outros. Pensão alimentícia recebida não conta."],
+  "Escribe un número aproximado.": ["Enter an approximate number.", "Escreva um número aproximado."],
+  "Total al mes para calcular la ayuda:": ["Monthly total used to calculate help:", "Total por mês para calcular a ajuda:"],
+  "Para quien tiene 65 años o más: ¿tiene Medicare?": ["For anyone 65 or older: do they have Medicare?", "Para quem tem 65 anos ou mais: tem Medicare?"],
+  "Algunas personas de 65 o más pueden tener Obamacare si no tienen Medicare gratis.": ["Some people 65 or older can get Obamacare if they don't have free Medicare.", "Algumas pessoas com 65 ou mais podem ter Obamacare se não tiverem Medicare gratuito."],
+  "Ya tiene Medicare": ["Already has Medicare", "Já tem Medicare"],
+  "No lo tiene, pero trabajó 10 años o más en EE. UU.": ["Doesn't have it, but worked 10+ years in the U.S.", "Não tem, mas trabalhou 10 anos ou mais nos EUA"],
+  "No lo tiene: trabajó menos de 10 años o tiene menos de 5 años con estatus legal": ["Doesn't have it: worked less than 10 years or has had legal status less than 5 years", "Não tem: trabalhou menos de 10 anos ou tem menos de 5 anos com status legal"],
+  "Controlada: presión o prediabetes": ["Controlled: blood pressure or prediabetes", "Controlada: pressão ou pré-diabetes"],
+  "Seria: diabetes (aunque esté controlada), cáncer, corazón o marcapasos, VIH": ["Serious: diabetes (even if controlled), cancer, heart or pacemaker, HIV", "Séria: diabetes (mesmo controlada), câncer, coração ou marca-passo, HIV"],
   "Marca todas las que apliquen.": ["Check all that apply.", "Marque todas as que se aplicam."],
   "Empleo (W-2)": ["Employment (W-2)", "Emprego (W-2)"], "Cuenta propia (1099)": ["Self-employed (1099)", "Autônomo (1099)"], "Pensión o Seguro Social": ["Pension or Social Security", "Pensão ou Social Security"], "Otro": ["Other", "Outro"], "Sin ingresos": ["No income", "Sem renda"],
   "Marca al menos una.": ["Check at least one.", "Marque pelo menos uma."],
