@@ -37,7 +37,12 @@ button,input,select,textarea{font:inherit;color:inherit}
 .top-in{max-width:620px;margin:0 auto}
 .brand{display:flex;justify-content:space-between;align-items:center;gap:12px;font-size:14px}
 .brand b{font-family:"Bricolage Grotesque";font-weight:700;font-size:15px;letter-spacing:0}
-.brand span{opacity:.75}
+.lang{display:flex;gap:4px}
+.lang button{background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,.3);border-radius:999px;font:700 12.5px/1 "Atkinson Hyperlegible";padding:7px 10px;min-height:32px;cursor:pointer}
+.lang button[aria-pressed="true"]{background:var(--mango);border-color:var(--mango);color:var(--ink)}
+.prog{display:grid;grid-template-columns:1fr auto;align-items:center;gap:12px;margin-top:12px}
+.prog .bar{margin-top:0}
+.prog span{font-size:13px;opacity:.8;white-space:nowrap}
 .bar{display:grid;grid-template-columns:repeat(6,1fr);gap:5px;margin-top:12px}
 .bar i{height:5px;border-radius:3px;background:rgba(255,255,255,.18);transition:background .3s}
 .bar i.done{background:var(--mango)}
@@ -155,8 +160,14 @@ small.legal{display:block;font-size:13.5px;color:var(--muted);line-height:1.5;ma
 
 <header class="top" aria-label="Progreso">
   <div class="top-in">
-    <div class="brand"><b>Manuel De Sousa Ins</b><span id="stepTxt">Paso 1 de 6</span></div>
-    <div class="bar" id="bar" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <div class="brand"><b>Manuel De Sousa Ins</b>
+      <div class="lang" role="group" aria-label="Idioma / Language / Idioma">
+        <button type="button" data-l="es" aria-pressed="true" lang="es" title="Español">ES</button>
+        <button type="button" data-l="en" aria-pressed="false" lang="en" title="English">EN</button>
+        <button type="button" data-l="pt" aria-pressed="false" lang="pt" title="Português">PT</button>
+      </div>
+    </div>
+    <div class="prog"><div class="bar" id="bar" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div><span id="stepTxt">Paso 1 de 6</span></div>
     <div class="family" id="family" aria-live="polite"></div>
   </div>
 </header>
@@ -164,6 +175,7 @@ small.legal{display:block;font-size:13.5px;color:var(--muted);line-height:1.5;ma
 <main>
 <form id="f" novalidate autocomplete="on">
   <div class="hp" aria-hidden="true"><label>No llenar <input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
+  <input type="hidden" name="contacto.idioma" id="idioma" value="es">
 
   <!-- ============ 1. CONTACTO ============ -->
   <section class="step on" data-step="1">
@@ -791,6 +803,250 @@ small.legal{display:block;font-size:13.5px;color:var(--muted);line-height:1.5;ma
   }
   loadDraft();
   updateReveals();
+})();
+</script>
+
+<script>
+/* ===== Idiomas: español (original), English, português =====
+   La página está escrita en español. Este bloque traduce cada texto en pantalla
+   (también lo que aparece después, como las tarjetas de personas) y guarda el idioma
+   en la solicitud, para que Manuel sepa en qué idioma escribirle. */
+(() => {
+  const T = {
+  // Cabecera y portada
+  "Preparemos tu seguro para": ["Let's get your insurance ready for", "Vamos preparar seu seguro para"],
+  "Cuéntame de tu familia en unos 8 minutos. Con esto te preparo las opciones que te convienen, sin tener que repetirlo todo por teléfono.": ["Tell me about your family in about 8 minutes. With this I'll prepare the options that fit you, without repeating everything over the phone.", "Me conte sobre sua família em uns 8 minutos. Com isso eu preparo as opções que combinam com você, sem precisar repetir tudo por telefone."],
+  "No pedimos Seguro Social": ["No Social Security number needed", "Não pedimos Social Security"],
+  "Sin costo": ["Free", "Sem custo"],
+  "Tu familia": ["Your family", "Sua família"],
+  // Paso 1
+  "¿Cómo te contacto?": ["How should I contact you?", "Como entro em contato?"],
+  "Solo para enviarte tus opciones. No compartimos tus datos.": ["Only to send you your options. We don't share your information.", "Só para te enviar suas opções. Não compartilhamos seus dados."],
+  "Nombre y apellido": ["First and last name", "Nome e sobrenome"],
+  "Escribe tu nombre y apellido.": ["Enter your first and last name.", "Escreva seu nome e sobrenome."],
+  "Teléfono": ["Phone", "Telefone"],
+  "Escribe un teléfono de 10 números.": ["Enter a 10-digit phone number.", "Escreva um telefone de 10 dígitos."],
+  "Correo": ["Email", "E-mail"],
+  "(opcional)": ["(optional)", "(opcional)"],
+  "Revisa el correo, parece que le falta algo.": ["Check the email, something seems to be missing.", "Confira o e-mail, parece que falta algo."],
+  "Estado": ["State", "Estado"],
+  "Elige…": ["Choose…", "Escolha…"],
+  "Elige tu estado.": ["Choose your state.", "Escolha seu estado."],
+  "Código postal": ["ZIP code", "CEP (ZIP code)"],
+  "5 números.": ["5 digits.", "5 dígitos."],
+  "¿Por dónde prefieres que te contacte?": ["How do you prefer I contact you?", "Por onde você prefere que eu entre em contato?"],
+  "Llamada": ["Phone call", "Ligação"],
+  "Mensaje de texto": ["Text message", "Mensagem de texto"],
+  "Elige una opción.": ["Choose an option.", "Escolha uma opção."],
+  "¿A qué hora te queda mejor?": ["What time works best?", "Qual horário é melhor para você?"],
+  "Mañana": ["Morning", "Manhã"], "Tarde": ["Afternoon", "Tarde"], "Noche": ["Evening", "Noite"], "Cualquiera": ["Any time", "Qualquer"],
+  // Paso 2
+  "Lo que buscas": ["What you're looking for", "O que você procura"],
+  "¿Para quién es el seguro?": ["Who is the insurance for?", "Para quem é o seguro?"],
+  "Así sé por dónde empezar.": ["So I know where to start.", "Assim sei por onde começar."],
+  "El seguro es…": ["The insurance is…", "O seguro é…"],
+  "Solo para mí": ["Just for me", "Só para mim"],
+  "Para mí y mi familia": ["For me and my family", "Para mim e minha família"],
+  "Para otros de mi familia, no para mí": ["For other family members, not for me", "Para outros da minha família, não para mim"],
+  "¿Qué frase se parece más a lo que piensas?": ["Which sentence is closest to what you think?", "Qual frase se parece mais com o que você pensa?"],
+  "Quiero algo que cubra bien nuestras necesidades médicas": ["I want something that covers our medical needs well", "Quero algo que cubra bem nossas necessidades médicas"],
+  "Quiero algo que pueda pagar cada mes sin problema": ["I want something I can pay every month without trouble", "Quero algo que eu consiga pagar todo mês sem problema"],
+  "Si no encuentro algo que me convenga, prefiero no tener seguro": ["If I don't find something that suits me, I'd rather not have insurance", "Se eu não achar algo que me convenha, prefiro ficar sem seguro"],
+  "Necesito ayuda para comparar y entender": ["I need help comparing and understanding", "Preciso de ajuda para comparar e entender"],
+  "¿Cuánto te sentirías cómodo pagando al mes?": ["How much would you be comfortable paying per month?", "Quanto você se sentiria confortável pagando por mês?"],
+  "Por todo el grupo. Me ayuda a saber por qué opción empezar; no es un compromiso.": ["For the whole group. It helps me know which option to start with; it's not a commitment.", "Para todo o grupo. Me ajuda a saber por qual opção começar; não é um compromisso."],
+  "Menos de $50": ["Under $50", "Menos de $50"], "$50 a $100": ["$50 to $100", "$50 a $100"], "$100 a $200": ["$100 to $200", "$100 a $200"], "$200 a $350": ["$200 to $350", "$200 a $350"], "Más de $350": ["Over $350", "Mais de $350"],
+  "Prefiero verlo contigo": ["I'd rather go over it with you", "Prefiro ver isso com você"],
+  // Paso 3
+  "Las personas": ["The people", "As pessoas"],
+  "¿Quiénes son?": ["Who are they?", "Quem são?"],
+  "Una tarjeta por persona, empezando por ti. Puedes agregar hasta 8.": ["One card per person, starting with you. You can add up to 8.", "Um cartão por pessoa, começando por você. Você pode adicionar até 8."],
+  "Solo necesito tus datos. A los demás de tu hogar los cuentas en el siguiente paso.": ["I only need your information. You'll count the rest of your household in the next step.", "Só preciso dos seus dados. O resto da sua casa você conta no próximo passo."],
+  "Primero tú, que estás llenando esto. Después agrega a cada persona que necesita seguro.": ["First you, since you're filling this out. Then add each person who needs insurance.", "Primeiro você, que está preenchendo. Depois adicione cada pessoa que precisa de seguro."],
+  "+ Agregar otra persona": ["+ Add another person", "+ Adicionar outra pessoa"],
+  "+ Agregar a otra persona que necesita seguro": ["+ Add another person who needs insurance", "+ Adicionar outra pessoa que precisa de seguro"],
+  "Agrega al menos a una persona que necesite seguro.": ["Add at least one person who needs insurance.", "Adicione pelo menos uma pessoa que precise de seguro."],
+  "Tú": ["You", "Você"], "Persona": ["Person", "Pessoa"], "Quitar": ["Remove", "Remover"],
+  "Nombre": ["Name", "Nome"], "Escribe el nombre.": ["Enter the name.", "Escreva o nome."],
+  "Relación contigo": ["Relationship to you", "Parentesco com você"],
+  "Esposo(a) o pareja": ["Spouse or partner", "Cônjuge ou parceiro(a)"], "Hijo(a)": ["Son or daughter", "Filho(a)"], "Padre o madre": ["Father or mother", "Pai ou mãe"], "Hermano(a)": ["Brother or sister", "Irmão(ã)"], "Otro familiar": ["Other relative", "Outro parente"],
+  "Elige la relación.": ["Choose the relationship.", "Escolha o parentesco."],
+  "Como el seguro no es para ti, solo necesito tu nombre.": ["Since the insurance isn't for you, I only need your name.", "Como o seguro não é para você, só preciso do seu nome."],
+  "Fecha de nacimiento": ["Date of birth", "Data de nascimento"], "Revisa la fecha.": ["Check the date.", "Confira a data."],
+  "Sexo": ["Sex", "Sexo"], "Femenino": ["Female", "Feminino"], "Masculino": ["Male", "Masculino"], "Elige uno.": ["Choose one.", "Escolha um."],
+  "¿Necesita seguro médico?": ["Do they need health insurance?", "Precisa de seguro de saúde?"],
+  "No, ya tiene": ["No, already has it", "Não, já tem"],
+  "¿Ha usado tabaco 4 veces o más por semana en los últimos 6 meses?": ["Used tobacco 4 or more times a week in the last 6 months?", "Usou tabaco 4 vezes ou mais por semana nos últimos 6 meses?"],
+  "Estatus en EE. UU.": ["Status in the U.S.", "Status nos EUA"],
+  "Cambia qué ayudas aplican. No pedimos documentos ni números.": ["It changes which help applies. We don't ask for documents or numbers.", "Muda quais ajudas se aplicam. Não pedimos documentos nem números."],
+  "Ciudadano(a)": ["Citizen", "Cidadão(ã)"], "Residente (green card)": ["Resident (green card)", "Residente (green card)"],
+  "Permiso de trabajo, TPS, asilo o parole": ["Work permit, TPS, asylum or parole", "Permissão de trabalho, TPS, asilo ou parole"],
+  "Ninguno por ahora": ["None for now", "Nenhum por enquanto"],
+  "Estatura y peso (opcional)": ["Height and weight (optional)", "Altura e peso (opcional)"],
+  "Estatura": ["Height", "Altura"], "pies": ["ft", "pés"], "pulg.": ["in", "pol."], "Peso (libras)": ["Weight (pounds)", "Peso (libras)"],
+  // Paso 4
+  "Hogar e ingresos": ["Household and income", "Casa e renda"],
+  "Tu hogar para los impuestos": ["Your tax household", "Sua casa para os impostos"],
+  "Esto es diferente a la lista de personas.": ["This is different from the list of people.", "Isto é diferente da lista de pessoas."],
+  "Para calcular la ayuda del gobierno cuenta todo el que va en tu declaración de impuestos, aunque no necesite seguro: por ejemplo, un esposo que ya tiene seguro del trabajo.": ["To calculate government help, count everyone on your tax return, even if they don't need insurance: for example, a spouse who already has insurance through work.", "Para calcular a ajuda do governo, conte todos que estão na sua declaração de impostos, mesmo quem não precisa de seguro: por exemplo, um marido que já tem seguro do trabalho."],
+  "Personas en tu declaración": ["People on your tax return", "Pessoas na sua declaração"],
+  "Elige un número.": ["Choose a number.", "Escolha um número."],
+  "Dependientes": ["Dependents", "Dependentes"], "(hijos u otros)": ["(children or others)", "(filhos ou outros)"],
+  "¿Cómo declaras impuestos?": ["How do you file taxes?", "Como você declara impostos?"],
+  "Soltero(a)": ["Single", "Solteiro(a)"], "Casados, juntos": ["Married, filing jointly", "Casados, declaração conjunta"], "Casados, por separado": ["Married, filing separately", "Casados, declaração separada"], "Cabeza de familia": ["Head of household", "Chefe de família"], "No declaro impuestos": ["I don't file taxes", "Não declaro impostos"],
+  "No sé": ["I don't know", "Não sei"],
+  "Ingreso del hogar al mes, antes de impuestos": ["Household monthly income, before taxes", "Renda mensal da casa, antes dos impostos"],
+  "Suma de todos en la declaración. Aproximado está bien.": ["Total for everyone on the return. An estimate is fine.", "Soma de todos na declaração. Aproximado está bom."],
+  "Escribe un número aproximado. Si no hay ingresos, pon 0.": ["Enter an approximate number. If there's no income, enter 0.", "Escreva um número aproximado. Se não houver renda, coloque 0."],
+  "¿De dónde vienen los ingresos?": ["Where does the income come from?", "De onde vem a renda?"],
+  "Marca todas las que apliquen.": ["Check all that apply.", "Marque todas as que se aplicam."],
+  "Empleo (W-2)": ["Employment (W-2)", "Emprego (W-2)"], "Cuenta propia (1099)": ["Self-employed (1099)", "Autônomo (1099)"], "Pensión o Seguro Social": ["Pension or Social Security", "Pensão ou Social Security"], "Otro": ["Other", "Outro"], "Sin ingresos": ["No income", "Sem renda"],
+  "Marca al menos una.": ["Check at least one.", "Marque pelo menos uma."],
+  "¿Algo de esto pasó en 2026 o pasará pronto?": ["Did any of this happen in 2026 or will it happen soon?", "Algo disso aconteceu em 2026 ou vai acontecer em breve?"],
+  "Matrimonio o divorcio": ["Marriage or divorce", "Casamento ou divórcio"], "Un bebé": ["A baby", "Um bebê"], "Mudanza": ["Moving", "Mudança"], "Pérdida de empleo": ["Job loss", "Perda de emprego"], "Empleo nuevo": ["New job", "Emprego novo"], "Cambio de ingresos": ["Income change", "Mudança de renda"], "Nada de esto": ["None of these", "Nada disso"],
+  // Paso 5
+  "Cobertura y salud": ["Coverage and health", "Cobertura e saúde"],
+  "Lo que tienen hoy": ["What you have today", "O que vocês têm hoje"],
+  "Esto me ayuda a buscar planes donde estén tus médicos y tus medicinas.": ["This helps me find plans that include your doctors and medications.", "Isso me ajuda a procurar planos com seus médicos e remédios."],
+  "¿Qué seguro tienen ahora?": ["What insurance do you have now?", "Que seguro vocês têm agora?"],
+  "Medicaid o CHIP": ["Medicaid or CHIP", "Medicaid ou CHIP"], "Del trabajo": ["Through work", "Do trabalho"], "Plan privado": ["Private plan", "Plano privado"], "Ninguno": ["None", "Nenhum"],
+  "Compañía": ["Company", "Empresa"], "Pagan al mes": ["Monthly payment", "Pagam por mês"],
+  "¿Alguien puede tener seguro por su trabajo?": ["Can anyone get insurance through work?", "Alguém pode ter seguro pelo trabalho?"],
+  "Sí": ["Yes", "Sim"], "No": ["No", "Não"], "¿Quién?": ["Who?", "Quem?"],
+  "¿Tienes cuenta en HealthCare.gov?": ["Do you have a HealthCare.gov account?", "Você tem conta no HealthCare.gov?"],
+  "Salud": ["Health", "Saúde"],
+  "Contesta por todo el grupo. Si dices que sí, cuéntame de quién y qué.": ["Answer for the whole group. If you say yes, tell me who and what.", "Responda por todo o grupo. Se disser que sim, me conte quem e o quê."],
+  "¿Hay médicos u hospitales que quieran conservar?": ["Are there doctors or hospitals you want to keep?", "Há médicos ou hospitais que vocês querem manter?"],
+  "Elige sí o no.": ["Choose yes or no.", "Escolha sim ou não."],
+  "¿Cuáles? Nombre del médico o clínica y ciudad": ["Which ones? Doctor or clinic name and city", "Quais? Nome do médico ou clínica e cidade"],
+  "Cuéntame un poco aquí.": ["Tell me a little here.", "Me conte um pouco aqui."],
+  "¿Alguien toma medicinas de forma regular?": ["Does anyone take medication regularly?", "Alguém toma remédio regularmente?"],
+  "¿Quién, qué medicina y qué dosis?": ["Who, which medication and what dose?", "Quem, qual remédio e qual dose?"],
+  "¿Alguien tiene una condición diagnosticada?": ["Does anyone have a diagnosed condition?", "Alguém tem uma condição diagnosticada?"],
+  "¿Quién y cuál?": ["Who and which one?", "Quem e qual?"],
+  "¿Cómo está esa condición?": ["How is that condition?", "Como está essa condição?"],
+  "Si hay varias, piensa en la más seria.": ["If there are several, think of the most serious one.", "Se houver várias, pense na mais séria."],
+  "Controlada: presión, prediabetes o diabetes bajo control con medicina o dieta": ["Controlled: blood pressure, prediabetes or diabetes under control with medication or diet", "Controlada: pressão, pré-diabetes ou diabetes sob controle com remédio ou dieta"],
+  "Seria: cáncer, problemas del corazón, VIH o diabetes que no está controlada": ["Serious: cancer, heart problems, HIV or diabetes that isn't under control", "Séria: câncer, problemas do coração, HIV ou diabetes que não está controlada"],
+  "¿Hay tratamientos o cirugías previstas para 2027?": ["Any treatments or surgeries planned for 2027?", "Há tratamentos ou cirurgias previstos para 2027?"],
+  "¿Quién y qué tratamiento?": ["Who and which treatment?", "Quem e qual tratamento?"],
+  "¿Alguien está embarazada o planea estarlo en 2027?": ["Is anyone pregnant or planning to be in 2027?", "Alguém está grávida ou planeja engravidar em 2027?"],
+  "Sí, ya está embarazada": ["Yes, already pregnant", "Sim, já está grávida"],
+  "Planea embarazarse": ["Planning a pregnancy", "Planeja engravidar"],
+  "Fecha estimada de parto": ["Estimated due date", "Data prevista do parto"],
+  "Escribe la fecha que te dio el médico. Aproximada está bien.": ["Enter the date your doctor gave you. An estimate is fine.", "Escreva a data que o médico te deu. Aproximada está bom."],
+  "¿Quién? Si lo planean, ¿para cuándo más o menos?": ["Who? If you're planning it, roughly when?", "Quem? Se estão planejando, para mais ou menos quando?"],
+  // Paso 6
+  "Último paso": ["Last step", "Último passo"],
+  "Protección extra y enviar": ["Extra protection and submit", "Proteção extra e enviar"],
+  "El seguro médico no lo paga todo. Esto me dice si te interesa algo más.": ["Health insurance doesn't pay for everything. This tells me if you're interested in anything else.", "O seguro de saúde não paga tudo. Isso me diz se você tem interesse em algo mais."],
+  "¿Tienen seguro de vida o de gastos finales?": ["Do you have life or final expense insurance?", "Vocês têm seguro de vida ou de despesas finais?"],
+  "¿Sobre qué quieres información?": ["What would you like information about?", "Sobre o que você quer informação?"],
+  "Marca todas las que quieras.": ["Check all you want.", "Marque todas que quiser."],
+  "Accidentes": ["Accidents", "Acidentes"], "Hospitalización": ["Hospital stays", "Hospitalização"], "Cáncer, infarto o derrame": ["Cancer, heart attack or stroke", "Câncer, infarto ou AVC"], "Maternidad": ["Maternity", "Maternidade"], "Vida o gastos finales": ["Life or final expenses", "Vida ou despesas finais"], "Dental y visión": ["Dental and vision", "Dental e visão"], "Solo el seguro médico": ["Just health insurance", "Só o seguro de saúde"],
+  "¿Cómo nos conociste?": ["How did you hear about us?", "Como você nos conheceu?"],
+  "Facebook o Instagram": ["Facebook or Instagram", "Facebook ou Instagram"], "Me lo recomendaron": ["Someone recommended you", "Alguém me indicou"], "Ya soy cliente": ["I'm already a client", "Já sou cliente"],
+  "¿Conoces a alguien que también necesite seguro?": ["Do you know anyone else who needs insurance?", "Você conhece alguém que também precise de seguro?"],
+  "¿Hubo alguna pregunta que no supiste contestar?": ["Was there any question you couldn't answer?", "Teve alguma pergunta que você não soube responder?"],
+  "¿Quién está llenando esto?": ["Who is filling this out?", "Quem está preenchendo isto?"],
+  "Yo, para mí o mi familia": ["Me, for myself or my family", "Eu, para mim ou minha família"],
+  "Lo lleno por otra persona (familiar o representante)": ["I'm filling it out for someone else (relative or representative)", "Estou preenchendo por outra pessoa (parente ou representante)"],
+  "Permisos": ["Permissions", "Autorizações"],
+  "Autorizo a Manuel De Sousa Ins, agente de seguros con licencia, a contactarme por WhatsApp, llamada, texto o correo sobre opciones de seguro, y a usar estos datos para buscar planes para mi familia.": ["I authorize Manuel De Sousa Ins, a licensed insurance agent, to contact me by WhatsApp, phone call, text or email about insurance options, and to use this information to look for plans for my family.", "Autorizo Manuel De Sousa Ins, agente de seguros licenciado, a me contatar por WhatsApp, ligação, mensagem de texto ou e-mail sobre opções de seguro, e a usar estes dados para procurar planos para minha família."],
+  "Lo que escribí es correcto según lo que sé.": ["What I wrote is correct to the best of my knowledge.", "O que escrevi está correto, até onde eu sei."],
+  "Puedes pedir que dejemos de contactarte cuando quieras. Pueden aplicar cargos de mensajes y datos. Enviar esto no te inscribe en ningún plan.": ["You can ask us to stop contacting you at any time. Message and data rates may apply. Submitting this does not enroll you in any plan.", "Você pode pedir para pararmos de te contatar quando quiser. Podem ser cobradas tarifas de mensagens e dados. Enviar isto não te inscreve em nenhum plano."],
+  "Marca las dos casillas para poder enviar.": ["Check both boxes to submit.", "Marque as duas caixas para poder enviar."],
+  "No se pudo enviar. Revisa tu conexión a internet y toca Enviar otra vez. Tus respuestas siguen guardadas.": ["It couldn't be sent. Check your internet connection and tap Submit again. Your answers are still saved.", "Não foi possível enviar. Confira sua conexão com a internet e toque em Enviar de novo. Suas respostas continuam salvas."],
+  // Final y botones
+  "Listo, ya lo tengo.": ["All set, I have it.", "Pronto, já recebi."],
+  "Recibí tu información.": ["I received your information.", "Recebi sua informação."],
+  "Lo que sigue": ["What's next", "O que vem agora"],
+  "Reviso tu información y busco los planes de tu zona.": ["I review your information and look for plans in your area.", "Eu reviso sua informação e procuro os planos da sua região."],
+  "Te contacto con tus opciones.": ["I'll contact you with your options.", "Entro em contato com suas opções."],
+  "Las vemos juntos y escoges con calma. Nada se inscribe sin tu permiso.": ["We go over them together and you choose calmly. Nothing gets enrolled without your permission.", "Vemos juntos e você escolhe com calma. Nada é contratado sem sua permissão."],
+  "Agente de seguros con licencia": ["Licensed insurance agent", "Agente de seguros licenciado"],
+  "Atrás": ["Back", "Voltar"], "Empezar": ["Start", "Começar"], "Seguir": ["Continue", "Continuar"],
+  "Enviar mi información": ["Submit my information", "Enviar minha informação"], "Enviando…": ["Sending…", "Enviando…"], "Enviado": ["Sent", "Enviado"],
+  "Tus respuestas se guardan en este teléfono mientras llenas.": ["Your answers are saved on this phone while you fill this out.", "Suas respostas ficam salvas neste celular enquanto você preenche."],
+  // Ejemplos dentro de los campos
+  "Ej.: mi esposo": ["E.g., my husband", "Ex.: meu marido"],
+  "Ej.: Dra. Pérez, AdventHealth Kissimmee": ["E.g., Dr. Pérez, AdventHealth Kissimmee", "Ex.: Dra. Pérez, AdventHealth Kissimmee"],
+  "Ej.: Mamá — metformina 500 mg": ["E.g., Mom — metformin 500 mg", "Ex.: Mãe — metformina 500 mg"],
+  "Ej.: Yo — presión alta": ["E.g., Me — high blood pressure", "Ex.: Eu — pressão alta"],
+  "Ej.: Mi hijo — cirugía de rodilla en marzo": ["E.g., My son — knee surgery in March", "Ex.: Meu filho — cirurgia no joelho em março"],
+  "Ej.: Yo — queremos buscarlo a mitad de año": ["E.g., Me — we want to try mid-year", "Ex.: Eu — queremos tentar no meio do ano"],
+  "¿Quién te recomendó? (opcional)": ["Who recommended us? (optional)", "Quem te indicou? (opcional)"],
+  "Nombre y teléfono": ["Name and phone", "Nome e telefone"],
+  "La vemos juntos por teléfono": ["We'll go over it together by phone", "Vemos juntos por telefone"],
+  "Tu nombre y relación con la persona": ["Your name and relationship to the person", "Seu nome e parentesco com a pessoa"],
+  // Estados con nombre distinto
+  "Distrito de Columbia": ["District of Columbia", "Distrito de Colúmbia"], "Hawái": ["Hawaii", "Havaí"], "Luisiana": ["Louisiana", "Luisiana"], "Míchigan": ["Michigan", "Michigan"], "Misisipi": ["Mississippi", "Mississippi"], "Misuri": ["Missouri", "Missouri"],
+  "Nuevo Hampshire": ["New Hampshire", "Nova Hampshire"], "Nueva Jersey": ["New Jersey", "Nova Jersey"], "Nuevo México": ["New Mexico", "Novo México"], "Nueva York": ["New York", "Nova York"],
+  "Carolina del Norte": ["North Carolina", "Carolina do Norte"], "Dakota del Norte": ["North Dakota", "Dakota do Norte"], "Oregón": ["Oregon", "Oregon"], "Pensilvania": ["Pennsylvania", "Pensilvânia"],
+  "Carolina del Sur": ["South Carolina", "Carolina do Sul"], "Dakota del Sur": ["South Dakota", "Dakota do Sul"], "Virginia Occidental": ["West Virginia", "Virgínia Ocidental"],
+  "California": ["California", "Califórnia"], "Florida": ["Florida", "Flórida"], "Georgia": ["Georgia", "Geórgia"], "Virginia": ["Virginia", "Virgínia"]
+  };
+  const i = L => L === "en" ? 0 : 1;
+  const tr = (s, L) => (T[s] && T[s][i(L)]) || null;
+  const MOM = {"mañana":["morning","de manhã"],"tarde":["afternoon","à tarde"],"noche":["evening","à noite"]};
+  const VIAS = {"WhatsApp":["on WhatsApp","pelo WhatsApp"],"mensaje de texto":["by text message","por mensagem de texto"],"correo":["by email","por e-mail"]};
+  // Textos que llevan partes que cambian (números, nombres)
+  const RULES = [
+    [/^Paso (\d+) de (\d+)$/, (L,a,b) => L==="en" ? `Step ${a} of ${b}` : `Passo ${a} de ${b}`],
+    [/^Persona (\d+)$/, (L,a) => `${L==="en"?"Person":"Pessoa"} ${a}`],
+    [/^(\d+) (año|años)$/, (L,a) => L==="en" ? `${a} ${a==="1"?"year":"years"} old` : `${a} ${a==="1"?"ano":"anos"}`],
+    [/^Listo, (.+)\. Ya lo tengo\.$/, (L,a) => L==="en" ? `All set, ${a}. I have it.` : `Pronto, ${a}. Já recebi.`],
+    [/^Recibí la información de (\d+) (persona|personas) en (.+)\.$/, (L,n,_,st) => { const s = tr(st,L) || st; return L==="en" ? `I received the information for ${n} ${n==="1"?"person":"people"} in ${s}.` : `Recebi a informação de ${n} ${n==="1"?"pessoa":"pessoas"} (${s}).`; }],
+    [/^Te (escribo|llamo)(?: por (WhatsApp|mensaje de texto|correo))?(?: en la (mañana|tarde|noche))? con tus opciones\.$/, (L,verbo,via,mom) => {
+      const m = mom ? " " + MOM[mom][i(L)] : "";
+      if (verbo === "llamo") return L==="en" ? `I'll call you${m} with your options.` : `Vou te ligar${m} com suas opções.`;
+      const v = via ? " " + VIAS[via][i(L)] : "";
+      return L==="en" ? `I'll message you${v}${m} with your options.` : `Vou te escrever${v}${m} com suas opções.`; }]
+  ];
+  const translate = (s, L) => {
+    if (L === "es") return s;
+    const k = s.trim(); if (!k) return s;
+    let r = tr(k, L);
+    if (r == null) for (const [re, f] of RULES) { const m = k.match(re); if (m) { r = f(L, ...m.slice(1)); break; } }
+    return r == null ? s : s.replace(k, r);
+  };
+
+  const ORIG = new WeakMap();
+  let LANG = "es";
+  function apply(root){
+    if (root.nodeType === 3) { doText(root); return; }
+    if (root.nodeType !== 1 || root.closest?.("script,style")) return;
+    const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT); let n;
+    while ((n = w.nextNode())) doText(n);
+    const els = root.matches?.("[placeholder]") ? [root, ...root.querySelectorAll("[placeholder]")] : root.querySelectorAll("[placeholder]");
+    els.forEach(el => { if (el.dataset.ph0 == null) el.dataset.ph0 = el.placeholder; el.placeholder = translate(el.dataset.ph0, LANG); });
+  }
+  function doText(n){
+    const p = n.parentElement; if (!p || p.closest("script,style,.lang")) return;
+    if (!ORIG.has(n)) ORIG.set(n, n.nodeValue);
+    const v = translate(ORIG.get(n), LANG);
+    if (n.nodeValue !== v) n.nodeValue = v;
+  }
+  // Lo que aparece después (tarjetas, mensajes, botones) también se traduce
+  new MutationObserver(ms => { if (LANG === "es") return; ms.forEach(m => m.addedNodes.forEach(apply)); })
+    .observe(document.body, { childList: true, subtree: true });
+
+  const TITLES = { es: "Tu seguro 2027", en: "Your 2027 insurance", pt: "Seu seguro 2027" };
+  function setLang(L){
+    if (!TITLES[L]) L = "es";
+    LANG = L;
+    document.documentElement.lang = L;
+    document.title = TITLES[L];
+    document.querySelectorAll(".lang button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.l === L)));
+    const h = document.getElementById("idioma"); if (h) h.value = L;
+    apply(document.body);
+    try { localStorage.setItem("oe2027_idioma", L); } catch(_) {}
+  }
+  document.querySelectorAll(".lang button").forEach(b => b.addEventListener("click", () => setLang(b.dataset.l)));
+  // Idioma inicial: ?lang=en en el enlace (para anuncios), o el último que escogió esta persona; si no, español
+  let start = new URLSearchParams(location.search).get("lang");
+  if (!start) { try { start = localStorage.getItem("oe2027_idioma"); } catch(_) {} }
+  setLang(start || "es");
 })();
 </script>
 </body>
