@@ -118,6 +118,25 @@ input:focus,select:focus,textarea:focus{border-color:var(--ink);outline:none}
 .rm{background:none;border:0;color:var(--err);font-size:15px;text-decoration:underline;cursor:pointer;padding:8px}
 .add{width:100%;min-height:58px;border:2px dashed var(--ink);border-radius:var(--r-card);background:transparent;font-weight:700;cursor:pointer;font-size:17px}
 .add:hover{background:var(--card)}
+/* Fecha en 3 casillas: salta sola a la siguiente */
+.dfield{display:grid;grid-template-columns:1fr 1fr 1.5fr;gap:8px}
+.dfield label{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--muted);font-weight:400;margin:0;min-width:0}
+.dfield input{width:100%;min-width:0}
+.dfield input{text-align:center;font-size:19px;letter-spacing:.04em;padding:12px 6px}
+html[lang="en"] .dfield .d-m{order:-1}
+/* Estatura y peso con unidades */
+.hw-h{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap}
+.hw-h > label{font-weight:700;margin:0}
+.units{display:inline-flex;background:var(--mist);border-radius:999px;padding:3px}
+.units label{position:relative;margin:0;font-weight:400}
+.units input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer}
+.units span{display:block;padding:6px 12px;border-radius:999px;font-size:14px;cursor:pointer;white-space:nowrap}
+.units input:checked + span{background:var(--ink);color:#fff;font-weight:700}
+.units input:focus-visible + span{outline:3px solid var(--mango);outline-offset:1px}
+.unit-in{position:relative}
+.unit-in input{padding-right:52px}
+.unit-in span{position:absolute;right:16px;top:50%;transform:translateY(-50%);color:var(--muted);font-weight:700;pointer-events:none}
+[data-u][hidden]{display:none}
 details.more{margin:-6px 0 18px}
 details.more summary{cursor:pointer;color:var(--ink-2);font-weight:700;font-size:15.5px;padding:6px 0}
 
@@ -442,7 +461,7 @@ small.legal{display:block;font-size:13.5px;color:var(--muted);line-height:1.5;ma
         <option value="">Elige…</option><option value="conyuge">Esposo(a) o pareja</option><option value="hijo">Hijo(a)</option><option value="padre_madre">Padre o madre</option><option value="hermano">Hermano(a)</option><option value="otro">Otro familiar</option>
       </select><div class="err-msg">Elige la relación.</div></div>
     <p data-fillnote hidden style="margin:-4px 0 18px;color:var(--muted)">Como el seguro no es para ti, solo necesito tu nombre.</p>
-    <div class="q" data-full><label>Fecha de nacimiento</label><input type="date" data-k="fecha_nacimiento" required><div class="err-msg">Revisa la fecha.</div></div>
+    <div class="q" data-full><label>Fecha de nacimiento</label><input type="hidden" data-k="fecha_nacimiento" data-date required><div class="err-msg">Revisa la fecha.</div></div>
     <fieldset class="q" data-preq data-full><legend>Sexo</legend><div class="chips">
       <label class="chip"><input type="radio" data-k="sexo" value="F"><span>Femenino</span></label>
       <label class="chip"><input type="radio" data-k="sexo" value="M"><span>Masculino</span></label></div><div class="err-msg">Elige uno.</div></fieldset>
@@ -456,12 +475,19 @@ small.legal{display:block;font-size:13.5px;color:var(--muted);line-height:1.5;ma
       <select data-k="estatus" required>
         <option value="">Elige…</option><option value="ciudadano">Ciudadano(a)</option><option value="residente">Residente (green card)</option><option value="permiso_trabajo">Permiso de trabajo, TPS, asilo o parole</option><option value="ninguno">Ninguno por ahora</option><option value="no_se">No sé</option>
       </select><div class="err-msg">Elige una opción.</div></div>
-    <details class="more" data-full><summary>Estatura y peso (opcional)</summary>
-      <div class="row" style="margin-top:12px">
-        <div class="q"><label>Estatura</label><div class="row" style="gap:6px"><select data-k="estatura_pies"><option value="">pies</option><option>4</option><option>5</option><option>6</option><option>7</option></select><select data-k="estatura_pulgadas"><option value="">pulg.</option><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option></select></div></div>
-        <div class="q"><label>Peso (libras)</label><input type="number" inputmode="numeric" min="1" max="700" data-k="peso_lb"></div>
+    <div class="q" data-full data-hw="estatura"><div class="hw-h"><label>Estatura</label>
+        <div class="units"><label><input type="radio" data-k="unidad_estatura" value="ft"><span>pies y pulgadas</span></label><label><input type="radio" data-k="unidad_estatura" value="cm"><span>cm</span></label></div></div>
+      <div class="row" style="gap:8px" data-u="ft">
+        <select data-k="estatura_pies" required><option value="">pies</option><option value="1">1 pies</option><option value="2">2 pies</option><option value="3">3 pies</option><option value="4">4 pies</option><option value="5">5 pies</option><option value="6">6 pies</option><option value="7">7 pies</option></select>
+        <select data-k="estatura_pulgadas" required><option value="">pulgadas</option><option value="0">0 pulg.</option><option value="1">1 pulg.</option><option value="2">2 pulg.</option><option value="3">3 pulg.</option><option value="4">4 pulg.</option><option value="5">5 pulg.</option><option value="6">6 pulg.</option><option value="7">7 pulg.</option><option value="8">8 pulg.</option><option value="9">9 pulg.</option><option value="10">10 pulg.</option><option value="11">11 pulg.</option></select>
       </div>
-    </details>
+      <div class="unit-in" data-u="cm" hidden><input type="number" inputmode="numeric" min="30" max="250" data-k="estatura_cm" required><span>cm</span></div>
+      <span class="hint" style="font-size:15px;color:var(--muted);display:block;margin-top:6px">Aproximado está bien.</span>
+      <div class="err-msg">Escribe la estatura.</div></div>
+    <div class="q" data-full data-hw="peso"><div class="hw-h"><label>Peso</label>
+        <div class="units"><label><input type="radio" data-k="unidad_peso" value="lb"><span>libras</span></label><label><input type="radio" data-k="unidad_peso" value="kg"><span>kg</span></label></div></div>
+      <div class="unit-in"><input type="number" inputmode="decimal" min="1" max="700" step="any" data-k="peso" required><span data-peso-u>lb</span></div>
+      <div class="err-msg">Escribe el peso aproximado.</div></div>
   </div>
 </template>
 
@@ -498,7 +524,7 @@ small.legal{display:block;font-size:13.5px;color:var(--muted);line-height:1.5;ma
         <label class="chip"><input type="radio" name="salud.embarazo.respuesta" value="no"><span>No</span></label>
       </div><div class="err-msg">Elige una opción.</div>
       <div class="reveal" data-when="salud.embarazo.respuesta=embarazada">
-        <div class="q" style="margin-bottom:12px"><label for="parto" style="font-weight:700;display:block;margin-bottom:8px">Fecha estimada de parto</label><input id="parto" type="date" name="salud.embarazo.fecha_parto" required data-type="parto"><div class="err-msg">Escribe la fecha que te dio el médico. Aproximada está bien.</div></div>
+        <div class="q" style="margin-bottom:12px"><label for="parto" style="font-weight:700;display:block;margin-bottom:8px">Fecha estimada de parto</label><input id="parto" type="hidden" name="salud.embarazo.fecha_parto" data-date required data-type="parto"><div class="err-msg">Escribe la fecha que te dio el médico. Aproximada está bien.</div></div>
       </div>
       <div class="reveal q" data-when="salud.embarazo.respuesta=embarazada,planea" data-reqtext style="margin-bottom:0">
         <label style="font-weight:700;display:block;margin-bottom:8px">¿Quién? Si lo planean, ¿para cuándo más o menos?</label>
@@ -533,7 +559,7 @@ small.legal{display:block;font-size:13.5px;color:var(--muted);line-height:1.5;ma
     </fieldset>`).join("") + EMBARAZO;
 
   // ---------- Personas ----------
-  const newPerson = () => ({nombre:"",relacion: people.length ? "" : "titular",fecha_nacimiento:"",sexo:"",necesita_seguro:"si",tabaco:"",estatus:"",estatura_pies:"",estatura_pulgadas:"",peso_lb:""});
+  const newPerson = () => ({nombre:"",relacion: people.length ? "" : "titular",fecha_nacimiento:"",sexo:"",necesita_seguro:"si",tabaco:"",estatus:"",unidad_estatura:"ft",estatura_pies:"",estatura_pulgadas:"",estatura_cm:"",unidad_peso:"lb",peso:""});
   const initials = n => (n||"").trim().split(/\s+/).filter(Boolean).slice(0,2).map(w=>w[0].toUpperCase()).join("") || "?";
   const ageOf = d => { if(!d) return null; const b=new Date(d+"T12:00"), t=new Date(); if(isNaN(b)) return null; let a=t.getFullYear()-b.getFullYear(); const m=t.getMonth()-b.getMonth(); if(m<0||(m===0&&t.getDate()<b.getDate())) a--; return a; };
 
@@ -566,14 +592,15 @@ small.legal{display:block;font-size:13.5px;color:var(--muted);line-height:1.5;ma
           node.querySelector("[data-need]").hidden = true;
         }
       }
+      p.unidad_estatura ||= "ft"; p.unidad_peso ||= "lb";
+      if (p.peso == null && p.peso_lb) p.peso = p.peso_lb;   // borradores viejos
       $$("[data-k]", node).forEach(el => {
         const k = el.dataset.k;
         if (el.type === "radio") { el.name = `p${i}_${k}`; el.checked = p[k] === el.value; }
         else el.value = p[k] ?? "";
       });
-      const today = new Date().toISOString().slice(0,10);
-      node.querySelector('[data-k="fecha_nacimiento"]').max = today;
-      node.querySelector('[data-k="fecha_nacimiento"]').min = "1900-01-01";
+      paintUnits(node, p);
+      enhanceDates(node);
       paintPersonHead(node, p);
       box.appendChild(node);
     });
@@ -588,11 +615,81 @@ small.legal{display:block;font-size:13.5px;color:var(--muted);line-height:1.5;ma
     node.querySelector("[data-age]").textContent = a !== null && a >= 0 ? `${a} ${a===1?"año":"años"}` : "";
     if (+node.dataset.i > 0) node.querySelector("[data-title]").textContent = p.nombre || `Persona ${+node.dataset.i+1}`;
   }
+  function paintUnits(node, p){
+    const cm = p.unidad_estatura === "cm";
+    node.querySelector('[data-u="ft"]').hidden = cm;
+    node.querySelector('[data-u="cm"]').hidden = !cm;
+    node.querySelector("[data-peso-u]").textContent = p.unidad_peso === "kg" ? "kg" : "lb";
+  }
+
+  // ---------- Fecha en 3 casillas (día, mes, año): al llenar una, salta sola a la siguiente ----------
+  function enhanceDates(root){
+    $$("input[data-date]", root).forEach(h => {
+      if (h.dataset.enh) return; h.dataset.enh = "1";
+      const w = document.createElement("div"); w.className = "dfield";
+      w.innerHTML = `<label class="d-d"><span>Día</span><input type="text" inputmode="numeric" autocomplete="off" maxlength="2" placeholder="DD" aria-label="Día"></label>
+        <label class="d-m"><span>Mes</span><input type="text" inputmode="numeric" autocomplete="off" maxlength="2" placeholder="MM" aria-label="Mes"></label>
+        <label class="d-y"><span>Año</span><input type="text" inputmode="numeric" autocomplete="off" maxlength="4" placeholder="AAAA" aria-label="Año"></label>`;
+      h.after(w);
+      const [d, m, y] = ["d-d","d-m","d-y"].map(c => w.querySelector(`.${c} input`));
+      const order = () => [d, m, y].sort((a, b) => (+getComputedStyle(a.parentElement).order) - (+getComputedStyle(b.parentElement).order));
+      const fill = () => { const v = h.value; if (/^\d{4}-\d{2}-\d{2}$/.test(v)) { y.value = v.slice(0,4); m.value = v.slice(5,7); d.value = v.slice(8,10); } };
+      fill(); h._fill = fill;
+      const commit = () => {
+        const dd = +d.value, mm = +m.value, yy = +y.value;
+        let iso = "";
+        if (y.value.length === 4 && dd >= 1 && mm >= 1 && mm <= 12) {
+          const t = new Date(yy, mm - 1, dd);
+          if (t.getFullYear() === yy && t.getMonth() === mm - 1 && t.getDate() === dd) iso = `${yy}-${String(mm).padStart(2,"0")}-${String(dd).padStart(2,"0")}`;
+        }
+        if (h.value !== iso) { h.value = iso; h.dispatchEvent(new Event("input", {bubbles:true})); h.dispatchEvent(new Event("change", {bubbles:true})); }
+        else { const q = w.closest(".bad"); if (q && iso) q.classList.remove("bad"); }
+      };
+      [d, m, y].forEach(inp => {
+        inp.addEventListener("input", () => {
+          let v = inp.value.replace(/\D/g, "");
+          // si pegan o escriben la fecha completa en la primera casilla
+          if (v.length >= 6 && inp !== y) { const o = order(); const digits = v.slice(0, 8); o[0].value = digits.slice(0,2); o[1].value = digits.slice(2,4); y.value = digits.slice(4); commit(); y.focus(); return; }
+          const max = inp === y ? 4 : 2;
+          v = v.slice(0, max);
+          // un solo dígito que no puede empezar otro número: 4-9 en el día, 2-9 en el mes
+          if (inp === d && v.length === 1 && +v > 3) v = "0" + v;
+          if (inp === m && v.length === 1 && +v > 1) v = "0" + v;
+          inp.value = v; commit();
+          if (v.length === max) { const o = order(); const nx = o[o.indexOf(inp) + 1]; if (nx) { nx.focus(); nx.select?.(); } }
+        });
+        inp.addEventListener("keydown", e => {
+          if (e.key === "Backspace" && !inp.value) { const o = order(); const pv = o[o.indexOf(inp) - 1]; if (pv) { e.preventDefault(); pv.focus(); pv.value = pv.value.slice(0, -1); commit(); } }
+          if (e.key === "/" || e.key === "-" || e.key === ".") { e.preventDefault(); if (inp.value.length === 1 && inp !== y) { inp.value = "0" + inp.value; commit(); } const o = order(); const nx = o[o.indexOf(inp) + 1]; if (nx) nx.focus(); }
+        });
+        inp.addEventListener("blur", () => { if (inp !== y && inp.value.length === 1 && +inp.value > 0) { inp.value = "0" + inp.value; commit(); } });
+      });
+      const lab = h.parentElement.querySelector(`label[for="${h.id}"]`);
+      if (lab) { const first = order()[0]; first.id = h.id + "_1"; lab.htmlFor = first.id; }
+    });
+  }
+  enhanceDates(document);
+
   $("#people").addEventListener("input", onPersonEdit);
   $("#people").addEventListener("change", onPersonEdit);
   function onPersonEdit(e){
     const el = e.target, card = el.closest(".person"); if(!card || !el.dataset.k) return;
     const p = people[+card.dataset.i];
+    if (el.dataset.k === "unidad_estatura" && el.checked && el.value !== p.unidad_estatura) {
+      if (el.value === "cm" && p.estatura_pies) { p.estatura_cm = String(Math.round(((+p.estatura_pies)*12 + (+p.estatura_pulgadas||0)) * 2.54)); }
+      if (el.value === "ft" && p.estatura_cm) { const t = Math.round(+p.estatura_cm / 2.54); p.estatura_pies = String(Math.floor(t/12)); p.estatura_pulgadas = String(t % 12); }
+      p.unidad_estatura = el.value;
+      card.querySelector('[data-k="estatura_cm"]').value = p.estatura_cm || "";
+      card.querySelector('[data-k="estatura_pies"]').value = p.estatura_pies || "";
+      card.querySelector('[data-k="estatura_pulgadas"]').value = p.estatura_pulgadas || "";
+      paintUnits(card, p); saveDraft(); return;
+    }
+    if (el.dataset.k === "unidad_peso" && el.checked && el.value !== p.unidad_peso) {
+      if (p.peso) p.peso = String(el.value === "kg" ? Math.round(+p.peso / 2.20462) : Math.round(+p.peso * 2.20462));
+      p.unidad_peso = el.value;
+      card.querySelector('[data-k="peso"]').value = p.peso || "";
+      paintUnits(card, p); saveDraft(); return;
+    }
     if (el.type === "radio") { if (el.checked) p[el.dataset.k] = el.value; } else p[el.dataset.k] = el.value;
     paintPersonHead(card, p); renderFamily(); clearBad(el); saveDraft();
   }
@@ -689,6 +786,23 @@ small.legal{display:block;font-size:13.5px;color:var(--muted);line-height:1.5;ma
       if (fs.querySelector('[name^="consentimiento.acepta"]')) { if (!inputs.every(i=>i.checked)) mark(fs); return; }
       if (!inputs.some(i => i.checked)) mark(fs);
     });
+    $$(".dfield", sec).forEach(w => {
+      const h = w.previousElementSibling; if (!h || !isVisible(w)) return;
+      if (h.required && !h.value) { mark(w); return; }
+      if (h.dataset.type === "parto" && h.value) { const dias = (new Date(h.value + "T12:00") - new Date()) / 864e5; if (dias < -30 || dias > 300) mark(w); }
+    });
+    $$("[data-hw]", sec).forEach(q => {
+      if (!isVisible(q)) return;
+      const card = q.closest(".person"); if (!card) return;
+      const p = people[+card.dataset.i];
+      if (q.dataset.hw === "estatura") {
+        if (p.unidad_estatura === "cm") { const c = +p.estatura_cm; if (!(c >= 30 && c <= 250)) mark(q); }
+        else if (!p.estatura_pies || p.estatura_pulgadas === "" || p.estatura_pulgadas == null) mark(q);
+      } else {
+        const w = +p.peso, kg = p.unidad_peso === "kg";
+        if (!(w > 0) || w > (kg ? 320 : 700)) mark(q);
+      }
+    });
     $$(".reveal.on[data-reqtext] textarea", sec).forEach(t => { if (!t.value.trim()) mark(t); });
 
     if (n === 3) {
@@ -756,7 +870,7 @@ small.legal{display:block;font-size:13.5px;color:var(--muted);line-height:1.5;ma
     out.contacto.email = out.contacto.email.trim() || null;
     out.miembros = people.map(({_fromContact, ...p}, i) => ({
       ...p, relacion: i === 0 ? "titular" : p.relacion, edad: ageOf(p.fecha_nacimiento),
-      estatura_pies: p.estatura_pies ? +p.estatura_pies : null, estatura_pulgadas: p.estatura_pulgadas ? +p.estatura_pulgadas : null, peso_lb: p.peso_lb ? +p.peso_lb : null
+      ...medidas(p), peso: undefined, unidad_estatura: undefined, unidad_peso: undefined
     }));
     if ($("#mcq").hidden) out.cobertura_actual.medicare_65 = "";
     if (out.hogar && out.hogar.ingreso_mensual === "") out.hogar.ingreso_mensual = null;
@@ -765,6 +879,15 @@ small.legal{display:block;font-size:13.5px;color:var(--muted);line-height:1.5;ma
     out.consentimiento = { ...out.consentimiento, fecha: new Date().toISOString(), version_texto: "oe2027-v1", pagina: location.href.split("?")[0] };
     out.extras.utm = Object.fromEntries(new URLSearchParams(location.search));
     return out;
+  }
+
+  // Estatura y peso: se guardan siempre en pies/pulgadas y libras (lo que usan las compañías) y también en cm/kg
+  function medidas(p){
+    let pies = null, pulg = null, cm = null, lb = null, kg = null;
+    if (p.unidad_estatura === "cm" && +p.estatura_cm > 0) { cm = Math.round(+p.estatura_cm); const t = Math.round(cm / 2.54); pies = Math.floor(t / 12); pulg = t % 12; }
+    else if (p.estatura_pies !== "" && p.estatura_pies != null) { pies = +p.estatura_pies; pulg = +p.estatura_pulgadas || 0; cm = Math.round((pies * 12 + pulg) * 2.54); }
+    if (+p.peso > 0) { if (p.unidad_peso === "kg") { kg = Math.round(+p.peso * 10) / 10; lb = Math.round(kg * 2.20462); } else { lb = Math.round(+p.peso); kg = Math.round(lb / 2.20462 * 10) / 10; } }
+    return { estatura_pies: pies, estatura_pulgadas: pulg, estatura_cm: cm, peso_lb: lb, peso_kg: kg, unidades: `${p.unidad_estatura === "cm" ? "cm" : "ft"}/${p.unidad_peso === "kg" ? "kg" : "lb"}` };
   }
 
   async function submit(){
@@ -822,6 +945,7 @@ small.legal{display:block;font-size:13.5px;color:var(--muted);line-height:1.5;ma
           else el.value = v;
         });
       });
+      $$("input[data-date]", form).forEach(h => h._fill?.());
       people = Array.isArray(d.people) ? d.people : [];
       if (people.length) renderPeople();
       updateReveals();
@@ -841,7 +965,7 @@ small.legal{display:block;font-size:13.5px;color:var(--muted);line-height:1.5;ma
 (() => {
   const T = {
   // Cabecera y portada
-  "Preparemos tu seguro para": ["Let's get your insurance ready for", "Vamos preparar seu seguro para"],
+  "Preparemos tu seguro para": ["Let's get your insurance ready for", "Vamos preparar seu plano de saúde para"],
   "Cuéntame de tu familia en unos 8 minutos. Con esto te preparo las opciones que te convienen, sin tener que repetirlo todo por teléfono.": ["Tell me about your family in about 8 minutes. With this I'll prepare the options that fit you, without repeating everything over the phone.", "Me conte sobre sua família em uns 8 minutos. Com isso eu preparo as opções que combinam com você, sem precisar repetir tudo por telefone."],
   "No pedimos Seguro Social": ["No Social Security number needed", "Não pedimos Social Security"],
   "Sin costo": ["Free", "Sem custo"],
@@ -869,16 +993,16 @@ small.legal{display:block;font-size:13.5px;color:var(--muted);line-height:1.5;ma
   "Mañana": ["Morning", "Manhã"], "Tarde": ["Afternoon", "Tarde"], "Noche": ["Evening", "Noite"], "Cualquiera": ["Any time", "Qualquer"],
   // Paso 2
   "Lo que buscas": ["What you're looking for", "O que você procura"],
-  "¿Para quién es el seguro?": ["Who is the insurance for?", "Para quem é o seguro?"],
+  "¿Para quién es el seguro?": ["Who is the insurance for?", "Para quem é o plano?"],
   "Así sé por dónde empezar.": ["So I know where to start.", "Assim sei por onde começar."],
-  "El seguro es…": ["The insurance is…", "O seguro é…"],
+  "El seguro es…": ["The insurance is…", "O plano é…"],
   "Solo para mí": ["Just for me", "Só para mim"],
   "Para mí y mi familia": ["For me and my family", "Para mim e minha família"],
   "Para otros de mi familia, no para mí": ["For other family members, not for me", "Para outros da minha família, não para mim"],
   "¿Qué frase se parece más a lo que piensas?": ["Which sentence is closest to what you think?", "Qual frase se parece mais com o que você pensa?"],
   "Quiero algo que cubra bien nuestras necesidades médicas": ["I want something that covers our medical needs well", "Quero algo que cubra bem nossas necessidades médicas"],
   "Quiero algo que pueda pagar cada mes sin problema": ["I want something I can pay every month without trouble", "Quero algo que eu consiga pagar todo mês sem problema"],
-  "Si no encuentro algo que me convenga, prefiero no tener seguro": ["If I don't find something that suits me, I'd rather not have insurance", "Se eu não achar algo que me convenha, prefiro ficar sem seguro"],
+  "Si no encuentro algo que me convenga, prefiero no tener seguro": ["If I don't find something that suits me, I'd rather not have insurance", "Se eu não achar algo que me convenha, prefiro ficar sem plano"],
   "Necesito ayuda para comparar y entender": ["I need help comparing and understanding", "Preciso de ajuda para comparar e entender"],
   "¿Cuánto te sentirías cómodo pagando al mes?": ["How much would you be comfortable paying per month?", "Quanto você se sentiria confortável pagando por mês?"],
   "Por todo el grupo. Me ayuda a saber por qué opción empezar; no es un compromiso.": ["For the whole group. It helps me know which option to start with; it's not a commitment.", "Para todo o grupo. Me ajuda a saber por qual opção começar; não é um compromisso."],
@@ -889,19 +1013,19 @@ small.legal{display:block;font-size:13.5px;color:var(--muted);line-height:1.5;ma
   "¿Quiénes son?": ["Who are they?", "Quem são?"],
   "Una tarjeta por persona, empezando por ti. Puedes agregar hasta 8.": ["One card per person, starting with you. You can add up to 8.", "Um cartão por pessoa, começando por você. Você pode adicionar até 8."],
   "Solo necesito tus datos. A los demás de tu hogar los cuentas en el siguiente paso.": ["I only need your information. You'll count the rest of your household in the next step.", "Só preciso dos seus dados. O resto da sua casa você conta no próximo passo."],
-  "Primero tú, que estás llenando esto. Después agrega a cada persona que necesita seguro.": ["First you, since you're filling this out. Then add each person who needs insurance.", "Primeiro você, que está preenchendo. Depois adicione cada pessoa que precisa de seguro."],
+  "Primero tú, que estás llenando esto. Después agrega a cada persona que necesita seguro.": ["First you, since you're filling this out. Then add each person who needs insurance.", "Primeiro você, que está preenchendo. Depois adicione cada pessoa que precisa de plano de saúde."],
   "+ Agregar otra persona": ["+ Add another person", "+ Adicionar outra pessoa"],
-  "+ Agregar a otra persona que necesita seguro": ["+ Add another person who needs insurance", "+ Adicionar outra pessoa que precisa de seguro"],
-  "Agrega al menos a una persona que necesite seguro.": ["Add at least one person who needs insurance.", "Adicione pelo menos uma pessoa que precise de seguro."],
+  "+ Agregar a otra persona que necesita seguro": ["+ Add another person who needs insurance", "+ Adicionar outra pessoa que precisa de plano de saúde"],
+  "Agrega al menos a una persona que necesite seguro.": ["Add at least one person who needs insurance.", "Adicione pelo menos uma pessoa que precise de plano de saúde."],
   "Tú": ["You", "Você"], "Persona": ["Person", "Pessoa"], "Quitar": ["Remove", "Remover"],
   "Nombre": ["Name", "Nome"], "Escribe el nombre.": ["Enter the name.", "Escreva o nome."],
   "Relación contigo": ["Relationship to you", "Parentesco com você"],
   "Esposo(a) o pareja": ["Spouse or partner", "Cônjuge ou parceiro(a)"], "Hijo(a)": ["Son or daughter", "Filho(a)"], "Padre o madre": ["Father or mother", "Pai ou mãe"], "Hermano(a)": ["Brother or sister", "Irmão(ã)"], "Otro familiar": ["Other relative", "Outro parente"],
   "Elige la relación.": ["Choose the relationship.", "Escolha o parentesco."],
-  "Como el seguro no es para ti, solo necesito tu nombre.": ["Since the insurance isn't for you, I only need your name.", "Como o seguro não é para você, só preciso do seu nome."],
+  "Como el seguro no es para ti, solo necesito tu nombre.": ["Since the insurance isn't for you, I only need your name.", "Como o plano não é para você, só preciso do seu nome."],
   "Fecha de nacimiento": ["Date of birth", "Data de nascimento"], "Revisa la fecha.": ["Check the date.", "Confira a data."],
   "Sexo": ["Sex", "Sexo"], "Femenino": ["Female", "Feminino"], "Masculino": ["Male", "Masculino"], "Elige uno.": ["Choose one.", "Escolha um."],
-  "¿Necesita seguro médico?": ["Do they need health insurance?", "Precisa de seguro de saúde?"],
+  "¿Necesita seguro médico?": ["Do they need health insurance?", "Precisa de plano de saúde?"],
   "No, ya tiene": ["No, already has it", "Não, já tem"],
   "¿Ha usado tabaco 4 veces o más por semana en los últimos 6 meses?": ["Used tobacco 4 or more times a week in the last 6 months?", "Usou tabaco 4 vezes ou mais por semana nos últimos 6 meses?"],
   "Estatus en EE. UU.": ["Status in the U.S.", "Status nos EUA"],
@@ -911,11 +1035,15 @@ small.legal{display:block;font-size:13.5px;color:var(--muted);line-height:1.5;ma
   "Ninguno por ahora": ["None for now", "Nenhum por enquanto"],
   "Estatura y peso (opcional)": ["Height and weight (optional)", "Altura e peso (opcional)"],
   "Estatura": ["Height", "Altura"], "pies": ["ft", "pés"], "pulg.": ["in", "pol."], "Peso (libras)": ["Weight (pounds)", "Peso (libras)"],
+  "Peso": ["Weight", "Peso"], "pies y pulgadas": ["ft and in", "pés e polegadas"], "pulgadas": ["in", "polegadas"], "libras": ["pounds", "libras"],
+  "Aproximado está bien.": ["An estimate is fine.", "Aproximado está bom."],
+  "Escribe la estatura.": ["Enter the height.", "Escreva a altura."], "Escribe el peso aproximado.": ["Enter the approximate weight.", "Escreva o peso aproximado."],
+  "Día": ["Day", "Dia"], "Mes": ["Month", "Mês"], "Año": ["Year", "Ano"], "AAAA": ["YYYY", "AAAA"],
   // Paso 4
   "Hogar e ingresos": ["Household and income", "Casa e renda"],
   "Tu hogar para los impuestos": ["Your tax household", "Sua casa para os impostos"],
   "Esto es diferente a la lista de personas.": ["This is different from the list of people.", "Isto é diferente da lista de pessoas."],
-  "Para calcular la ayuda del gobierno cuenta todo el que va en tu declaración de impuestos, aunque no necesite seguro: por ejemplo, un esposo que ya tiene seguro del trabajo.": ["To calculate government help, count everyone on your tax return, even if they don't need insurance: for example, a spouse who already has insurance through work.", "Para calcular a ajuda do governo, conte todos que estão na sua declaração de impostos, mesmo quem não precisa de seguro: por exemplo, um marido que já tem seguro do trabalho."],
+  "Para calcular la ayuda del gobierno cuenta todo el que va en tu declaración de impuestos, aunque no necesite seguro: por ejemplo, un esposo que ya tiene seguro del trabajo.": ["To calculate government help, count everyone on your tax return, even if they don't need insurance: for example, a spouse who already has insurance through work.", "Para calcular a ajuda do governo, conte todos que estão na sua declaração de impostos, mesmo quem não precisa de plano: por exemplo, um marido que já tem plano de saúde pelo trabalho."],
   "Personas en tu declaración": ["People on your tax return", "Pessoas na sua declaração"],
   "Elige un número.": ["Choose a number.", "Escolha um número."],
   "Dependientes": ["Dependents", "Dependentes"], "(hijos u otros)": ["(children or others)", "(filhos ou outros)"],
@@ -932,7 +1060,7 @@ small.legal{display:block;font-size:13.5px;color:var(--muted);line-height:1.5;ma
   "Por cuenta propia (1099): contratista o negocio propio": ["Self-employed (1099): contractor or own business", "Autônomo (1099): prestador ou negócio próprio"],
   "Pensión, Seguro Social o desempleo": ["Pension, Social Security or unemployment", "Pensão, Social Security ou seguro-desemprego"],
   "Sueldo de empleo (W-2) al mes, antes de impuestos": ["W-2 wages per month, before taxes", "Salário (W-2) por mês, antes dos impostos"],
-  "Lo que dice el cheque antes de descuentos, sumando a todos los de la declaración. Si te descuentan 401(k) o el seguro del trabajo antes de impuestos, puedes restarlo.": ["Your paycheck before deductions, for everyone on the return. If 401(k) or work insurance comes out before taxes, you can subtract it.", "O valor do salário antes dos descontos, somando todos da declaração. Se descontam 401(k) ou o seguro do trabalho antes dos impostos, pode subtrair."],
+  "Lo que dice el cheque antes de descuentos, sumando a todos los de la declaración. Si te descuentan 401(k) o el seguro del trabajo antes de impuestos, puedes restarlo.": ["Your paycheck before deductions, for everyone on the return. If 401(k) or work insurance comes out before taxes, you can subtract it.", "O valor do salário antes dos descontos, somando todos da declaração. Se descontam 401(k) ou o plano de saúde do trabalho antes dos impostos, pode subtrair."],
   "Ganancia por cuenta propia (1099) al mes, después de los gastos del negocio": ["Self-employed (1099) profit per month, after business expenses", "Lucro como autônomo (1099) por mês, depois das despesas do negócio"],
   "Lo que te queda después de pagar lo del trabajo: trabajadores que te ayudan, materiales, gasolina o millaje, teléfono, herramientas. Pon lo mismo que vas a declarar en tus impuestos.": ["What's left after paying for the work: helpers, materials, gas or mileage, phone, tools. Use the same number you'll report on your taxes.", "O que sobra depois de pagar o trabalho: ajudantes, materiais, gasolina ou milhagem, telefone, ferramentas. Coloque o mesmo que vai declarar nos impostos."],
   "Importante si trabajas por tu cuenta.": ["Important if you're self-employed.", "Importante se você é autônomo."],
@@ -957,10 +1085,10 @@ small.legal{display:block;font-size:13.5px;color:var(--muted);line-height:1.5;ma
   "Cobertura y salud": ["Coverage and health", "Cobertura e saúde"],
   "Lo que tienen hoy": ["What you have today", "O que vocês têm hoje"],
   "Esto me ayuda a buscar planes donde estén tus médicos y tus medicinas.": ["This helps me find plans that include your doctors and medications.", "Isso me ajuda a procurar planos com seus médicos e remédios."],
-  "¿Qué seguro tienen ahora?": ["What insurance do you have now?", "Que seguro vocês têm agora?"],
+  "¿Qué seguro tienen ahora?": ["What insurance do you have now?", "Que plano de saúde vocês têm agora?"],
   "Medicaid o CHIP": ["Medicaid or CHIP", "Medicaid ou CHIP"], "Del trabajo": ["Through work", "Do trabalho"], "Plan privado": ["Private plan", "Plano privado"], "Ninguno": ["None", "Nenhum"],
   "Compañía": ["Company", "Empresa"], "Pagan al mes": ["Monthly payment", "Pagam por mês"],
-  "¿Alguien puede tener seguro por su trabajo?": ["Can anyone get insurance through work?", "Alguém pode ter seguro pelo trabalho?"],
+  "¿Alguien puede tener seguro por su trabajo?": ["Can anyone get insurance through work?", "Alguém pode ter plano de saúde pelo trabalho?"],
   "Sí": ["Yes", "Sim"], "No": ["No", "Não"], "¿Quién?": ["Who?", "Quem?"],
   "¿Tienes cuenta en HealthCare.gov?": ["Do you have a HealthCare.gov account?", "Você tem conta no HealthCare.gov?"],
   "Salud": ["Health", "Saúde"],
@@ -988,14 +1116,14 @@ small.legal{display:block;font-size:13.5px;color:var(--muted);line-height:1.5;ma
   // Paso 6
   "Último paso": ["Last step", "Último passo"],
   "Protección extra y enviar": ["Extra protection and submit", "Proteção extra e enviar"],
-  "El seguro médico no lo paga todo. Esto me dice si te interesa algo más.": ["Health insurance doesn't pay for everything. This tells me if you're interested in anything else.", "O seguro de saúde não paga tudo. Isso me diz se você tem interesse em algo mais."],
+  "El seguro médico no lo paga todo. Esto me dice si te interesa algo más.": ["Health insurance doesn't pay for everything. This tells me if you're interested in anything else.", "O plano de saúde não paga tudo. Isso me diz se você tem interesse em algo mais."],
   "¿Tienen seguro de vida o de gastos finales?": ["Do you have life or final expense insurance?", "Vocês têm seguro de vida ou de despesas finais?"],
   "¿Sobre qué quieres información?": ["What would you like information about?", "Sobre o que você quer informação?"],
   "Marca todas las que quieras.": ["Check all you want.", "Marque todas que quiser."],
-  "Accidentes": ["Accidents", "Acidentes"], "Hospitalización": ["Hospital stays", "Hospitalização"], "Cáncer, infarto o derrame": ["Cancer, heart attack or stroke", "Câncer, infarto ou AVC"], "Maternidad": ["Maternity", "Maternidade"], "Vida o gastos finales": ["Life or final expenses", "Vida ou despesas finais"], "Dental y visión": ["Dental and vision", "Dental e visão"], "Solo el seguro médico": ["Just health insurance", "Só o seguro de saúde"],
+  "Accidentes": ["Accidents", "Acidentes"], "Hospitalización": ["Hospital stays", "Hospitalização"], "Cáncer, infarto o derrame": ["Cancer, heart attack or stroke", "Câncer, infarto ou AVC"], "Maternidad": ["Maternity", "Maternidade"], "Vida o gastos finales": ["Life or final expenses", "Vida ou despesas finais"], "Dental y visión": ["Dental and vision", "Dental e visão"], "Solo el seguro médico": ["Just health insurance", "Só o plano de saúde"],
   "¿Cómo nos conociste?": ["How did you hear about us?", "Como você nos conheceu?"],
   "Facebook o Instagram": ["Facebook or Instagram", "Facebook ou Instagram"], "Me lo recomendaron": ["Someone recommended you", "Alguém me indicou"], "Ya soy cliente": ["I'm already a client", "Já sou cliente"],
-  "¿Conoces a alguien que también necesite seguro?": ["Do you know anyone else who needs insurance?", "Você conhece alguém que também precise de seguro?"],
+  "¿Conoces a alguien que también necesite seguro?": ["Do you know anyone else who needs insurance?", "Você conhece alguém que também precise de plano de saúde?"],
   "¿Hubo alguna pregunta que no supiste contestar?": ["Was there any question you couldn't answer?", "Teve alguma pergunta que você não soube responder?"],
   "¿Quién está llenando esto?": ["Who is filling this out?", "Quem está preenchendo isto?"],
   "Yo, para mí o mi familia": ["Me, for myself or my family", "Eu, para mim ou minha família"],
@@ -1042,6 +1170,8 @@ small.legal{display:block;font-size:13.5px;color:var(--muted);line-height:1.5;ma
   // Textos que llevan partes que cambian (números, nombres)
   const RULES = [
     [/^Paso (\d+) de (\d+)$/, (L,a,b) => L==="en" ? `Step ${a} of ${b}` : `Passo ${a} de ${b}`],
+    [/^(\d+) pies$/, (L,a) => L==="en" ? `${a} ft` : `${a} pés`],
+    [/^(\d+) pulg\.$/, (L,a) => L==="en" ? `${a} in` : `${a} pol.`],
     [/^Persona (\d+)$/, (L,a) => `${L==="en"?"Person":"Pessoa"} ${a}`],
     [/^(\d+) (año|años)$/, (L,a) => L==="en" ? `${a} ${a==="1"?"year":"years"} old` : `${a} ${a==="1"?"ano":"anos"}`],
     [/^Listo, (.+)\. Ya lo tengo\.$/, (L,a) => L==="en" ? `All set, ${a}. I have it.` : `Pronto, ${a}. Já recebi.`],
@@ -1080,7 +1210,7 @@ small.legal{display:block;font-size:13.5px;color:var(--muted);line-height:1.5;ma
   new MutationObserver(ms => { if (LANG === "es") return; ms.forEach(m => m.addedNodes.forEach(apply)); })
     .observe(document.body, { childList: true, subtree: true });
 
-  const TITLES = { es: "Tu seguro 2027", en: "Your 2027 insurance", pt: "Seu seguro 2027" };
+  const TITLES = { es: "Tu seguro 2027", en: "Your 2027 insurance", pt: "Seu plano de saúde 2027" };
   function setLang(L){
     if (!TITLES[L]) L = "es";
     LANG = L;
